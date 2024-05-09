@@ -396,15 +396,30 @@ if init_prompt:
 
     def save_as_word(response_intro, response_content, response_social, response_conclusion):
         # Create a new Word document
-        doc = Docx()
-        # Add markdown to the document
-        doc.add_paragraph(response_intro)
-        doc.add_paragraph(response_content)
-        doc.add_paragraph(response_social)
-        doc.add_paragraph(response_conclusion)
+        doc = Document()
+        
+        # Function to add content with headings
+        def add_content_with_headings(content):
+            lines = content.split('\n')
+            for line in lines:
+                if line.startswith('####'):
+                    # Add heading
+                    doc.add_heading(line.lstrip('# '), level=2)
+                else:
+                    # Add regular paragraph
+                    doc.add_paragraph(line)
+            # Add empty paragraph for separation
+            doc.add_paragraph()
+    
+        # Add markdown to the document with headings
+        add_content_with_headings(response_intro)
+        add_content_with_headings(response_content)
+        add_content_with_headings(response_social)
+        add_content_with_headings(response_conclusion)
+    
         # Save the document
         doc.save("ESIA Draft.docx")
-
+    
     save_as_word(response_intro, response_content, response_social, response_conclusion)
     with open("ESIA Draft.docx", "rb") as f:
         bytes_data = f.read()
@@ -414,3 +429,4 @@ if init_prompt:
         file_name="ESIA Draft.docx",
         mime="application/docx"
     )
+
