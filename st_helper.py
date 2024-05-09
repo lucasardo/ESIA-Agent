@@ -34,7 +34,25 @@ import requests
 import json
 import time
 
+azure_endpoint = st.secrets["azure_endpoint"]
+openai_api_key = st.secrets['openai_api_key']
 
+openai_deployment_name = st.secrets['openai_deployment_name']
+openai_api_version = st.secrets['openai_api_version']
+embedding_model = st.secrets['embedding_model']
+embedding_deployment_name = st.secrets['embedding_deployment_name']
+
+search_endpoint = st.secrets['search_endpoint']
+search_api_key = st.secrets['search_api_key']
+search_api_version = st.secrets['search_api_version']
+search_service_name = st.secrets['search_service_name']
+
+search_url = f"https://{search_service_name}.search.windows.net/"
+search_credential = AzureKeyCredential(search_api_key)
+
+index_name = "esias-base-index"
+max_tokens = 4096
+dimensionality = 1536
 ####################################################################################################
 
 # Design functions
@@ -162,29 +180,7 @@ def simple_hybrid_search(query, index_name, filter, search_url, search_credentia
 
     return results
 
-
 # AGENT AND CHAT HISTORY
-
-# Configure the baseline configuration of the OpenAI library for Azure OpenAI Service.
-azure_endpoint = os.environ['AZURE_ENDPOINT']
-openai_api_key = os.environ['OPENAI_API_KEY']
-
-openai_deployment_name = os.environ['GPT_DEPLOYMENT_NAME']
-openai_api_version = os.environ['OPENAI_API_VERSION']
-embedding_model = os.environ['EMBEDDING_MODEL']
-embedding_deployment_name = os.environ['EMBEDDING_DEPLOYMENT_NAME']
-
-search_endpoint = os.environ['SEARCH_ENDPOINT']
-search_api_key = os.environ['SEARCH_API_KEY']
-search_api_version = os.environ['SEARCH_API_VERSION']
-search_service_name = os.environ['SEARCH_SERVICE_NAME']
-search_url = f"https://{search_service_name}.search.windows.net/"
-search_credential = AzureKeyCredential(search_api_key)
-
-index_name = "esias-base-index"
-max_tokens = 4096
-dimensionality = 1536
-
 
 CUSTOM_CHATBOT_PREFIX_INTRO = """
 # Instructions
