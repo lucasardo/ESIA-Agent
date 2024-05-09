@@ -9,6 +9,7 @@ from llama_index.core import VectorStoreIndex, PromptHelper, ServiceContext
 from llama_index.llms.azure_openai import AzureOpenAI
 from llama_index.core.settings import Settings
 from docx import Document as Docx
+from docx.shared import RGBColor
 
 from st_helper import *
 
