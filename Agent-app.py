@@ -404,10 +404,17 @@ if init_prompt:
             for line in lines:
                 if line.startswith('####'):
                     # Add heading
-                    doc.add_heading(line.lstrip('# '), level=2)
+                    heading = doc.add_heading(line.lstrip('# '), level=2)
+                    # Set heading color to red
+                    for run in heading.runs:
+                        run.font.color.rgb = RGBColor(255, 0, 0)  # Red color
                 elif line.startswith('###'):
                     # Add heading
-                    doc.add_heading(line.lstrip('# '), level=1)
+                    # Add heading
+                    heading = doc.add_heading(line.lstrip('# '), level=1)
+                    # Set heading color to red
+                    for run in heading.runs:
+                        run.font.color.rgb = RGBColor(255, 0, 0)  # Red color
                 else:
                     # Add regular paragraph
                     doc.add_paragraph(line)
