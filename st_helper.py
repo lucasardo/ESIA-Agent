@@ -182,7 +182,7 @@ def simple_hybrid_search(query, index_name, filter, search_url, search_credentia
 
 # AGENT AND CHAT HISTORY
 
-CUSTOM_CHATBOT_PREFIX_INTRO = """
+CUSTOM_CHATBOT_PREFIX = """
 # Instructions
 ## On your profile and general capabilities:
 - You are an assistant designed to help in the drafting of environmental analyses. Your task is to draft a 'Non Techincal Summary' of an Environmental and Social Impact Assessment.
@@ -231,7 +231,7 @@ DOCSEARCH_PROMPT_TEXT_CONTENT = """
 On your ability to answer question based on fetched documents (sources):
 
 - Given parts extracted (CONTEXT) from one or more documents and a question, use the context to take cue in generating the ENVIRONMENTAL IMPACT of the Non-Technical Summary.
-- You only have to produce the ENVIRONMENTAL IMPACT of the Non Technical Summary.
+- You only have to produce the ENVIRONMENTAL IMPACT chapter of the Non Technical Summary.
 - The ENVIRONMENTAL IMPACT chapter you have to produce must include these 6 sections: 1. Noise. 2. Soil 3. Water. 4. AIr Quality. 5. Landscape and visual impact. 6. Biodiversity.
 - Each section should consist of at least 2 paragraphs.
 - In the user question you will find information on the name of the project, the location, the technology used and the energy sector (wind power, solar power, hydroelectricity, waste). Use the CONTEXT to find information from projects in the same energy sector and use this as a starting point to generate the text for the 12 sections mentioned above.
@@ -244,9 +244,43 @@ On your ability to answer question based on fetched documents (sources):
 - Remember to respond in the same language as the question.
 """
 
+DOCSEARCH_PROMPT_TEXT_SOCIAL = """
+
+On your ability to answer question based on fetched documents (sources):
+
+- Given parts extracted (CONTEXT) from one or more documents and a question, use the context to take cue in generating the SOCIAL IMPACT chapter of the Non-Technical Summary.
+- You only have to produce the SOCIAL IMPACT chapter of the Non Technical Summary.
+- The SOCIAL IMPACT chapter you have to produce must include these 3 sections: 1. Economy and employment. 2. Cultural heritage 3. Land and Livelihood.
+- In the user question you will find information on the name of the project, the location, the technology used and the energy sector (wind power, solar power, hydroelectricity, waste). Use the CONTEXT to find information from projects in the same energy sector and use this as a starting point to generate the text for the 12 sections mentioned above.
+- Whenever you use information contained in documents retrieved from the CONTEXT, specify the name of the project described in that document.
+
+## On your ability to answer question based on fetched documents (sources):
+- If there are conflicting information or multiple definitions or explanations, detail them all in your answer.
+- **You sould answer the question unsing information contained in the extracted parts (CONTEXT) below**.
+
+- Remember to respond in the same language as the question.
+"""
+
+DOCSEARCH_PROMPT_TEXT_CONCLUSION = """
+
+On your ability to answer question based on fetched documents (sources):
+
+- Given parts extracted (CONTEXT) from one or more documents and a question, use the context to take cue in generating the SOCIAL IMPACT chapter of the Non-Technical Summary.
+- You only have to produce the CONCLUSION chapter of the Non Technical Summary.
+- In the user question you will find information on the name of the project, the location, the technology used and the energy sector (wind power, solar power, hydroelectricity, waste). Use the CONTEXT to find information from projects in the same energy sector and use this as a starting point to generate the text for the 12 sections mentioned above.
+- Whenever you use information contained in documents retrieved from the CONTEXT, specify the name of the project described in that document.
+
+## On your ability to answer question based on fetched documents (sources):
+- If there are conflicting information or multiple definitions or explanations, detail them all in your answer.
+- **You sould answer the question unsing information contained in the extracted parts (CONTEXT) below**.
+
+- Remember to respond in the same language as the question.
+"""
+
+
 AGENT_INTRO_PROMPT = ChatPromptTemplate.from_messages(
     [
-        ("system", CUSTOM_CHATBOT_PREFIX_INTRO + DOCSEARCH_PROMPT_TEXT_INTRO),
+        ("system", CUSTOM_CHATBOT_PREFIX + DOCSEARCH_PROMPT_TEXT_INTRO),
         MessagesPlaceholder(variable_name='history', optional=True),
         ("human", "{question}"),
         MessagesPlaceholder(variable_name='agent_scratchpad')
@@ -255,7 +289,25 @@ AGENT_INTRO_PROMPT = ChatPromptTemplate.from_messages(
 
 AGENT_CONTENT_PROMPT = ChatPromptTemplate.from_messages(
     [
-        ("system", CUSTOM_CHATBOT_PREFIX_INTRO + DOCSEARCH_PROMPT_TEXT_CONTENT),
+        ("system", CUSTOM_CHATBOT_PREFIX + DOCSEARCH_PROMPT_TEXT_CONTENT),
+        MessagesPlaceholder(variable_name='history', optional=True),
+        ("human", "{question}"),
+        MessagesPlaceholder(variable_name='agent_scratchpad')
+    ]
+)
+
+AGENT_SOCIAL_PROMPT = ChatPromptTemplate.from_messages(
+    [
+        ("system", CUSTOM_CHATBOT_PREFIX + DOCSEARCH_PROMPT_TEXT_SOCIAL),
+        MessagesPlaceholder(variable_name='history', optional=True),
+        ("human", "{question}"),
+        MessagesPlaceholder(variable_name='agent_scratchpad')
+    ]
+)
+
+AGENT_CONCLUSION_PROMPT = ChatPromptTemplate.from_messages(
+    [
+        ("system", CUSTOM_CHATBOT_PREFIX + DOCSEARCH_PROMPT_TEXT_CONCLUSION),
         MessagesPlaceholder(variable_name='history', optional=True),
         ("human", "{question}"),
         MessagesPlaceholder(variable_name='agent_scratchpad')
