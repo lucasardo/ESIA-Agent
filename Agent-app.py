@@ -405,7 +405,7 @@ if init_prompt:
         # Save the document
         doc.save("ESIA Draft.docx")
 
-    save_as_word(response_intro, response_content)
+    save_as_word(response_intro, response_content, response_social, response_conclusion)
     with open("ESIA Draft.docx", "rb") as f:
         bytes_data = f.read()
     st.download_button(
