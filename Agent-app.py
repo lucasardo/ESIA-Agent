@@ -396,7 +396,7 @@ if init_prompt:
 
     def save_as_word(response_intro, response_content, response_social, response_conclusion):
         # Create a new Word document
-        doc = Document()
+        doc = Docx()
         
         # Function to add content with headings
         def add_content_with_headings(content):
