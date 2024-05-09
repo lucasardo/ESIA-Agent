@@ -93,7 +93,9 @@ st.write("<h5 style='color: #F9423A; text-align: center;'>I am your assistant fo
 
 st.markdown('#') 
 
-###############################################################################
+######################################
+####### ENVIRONMENTAL ENGINEER
+######################################
 
 filter = ""
 
@@ -180,10 +182,14 @@ if init_prompt:
                 st.write(":warning: Medium confidence. Search score: ", score)
             else:
                 st.write(":x: Low confidence. Search score: ", score)
+    
+######################################
+####### ENVIRONMENTAL ENGINEER
+######################################
                 
     st.markdown('#')
     
-    st.write("<h2 style='color: #F9423A;'>ENVIRONMENTAL AND SOCIAL IMPACT", unsafe_allow_html=True)
+    st.write("<h2 style='color: #F9423A;'>ENVIRONMENTAL IMPACT", unsafe_allow_html=True)
     
     question = str(init_prompt)
     
@@ -254,14 +260,148 @@ if init_prompt:
                 st.write(":warning: Medium confidence. Search score: ", score)
             else:
                 st.write(":x: Low confidence. Search score: ", score)
+
+######################################
+####### ENVIRONMENTAL ECONOMIST
+######################################
+                
+    st.markdown('#')
     
-    def save_as_word(response_intro, response_content):
+    st.write("<h2 style='color: #F9423A;'>SOCIAL IMPACT", unsafe_allow_html=True)
+    
+    question = str(init_prompt)
+    
+    prompt = AGENT_SOCIAL_PROMPT
+    
+    tools = [GetDocSearchResults_Tool(
+    indexes=indexes, k=10, reranker_th=1, sas_token='na')]
+    
+    COMPLETION_TOKENS = 4096
+
+    llm = AzureChatOpenAI(deployment_name=openai_deployment_name, openai_api_version=openai_api_version,
+                            openai_api_key=openai_api_key, azure_endpoint=azure_endpoint, temperature = 0)
+
+    agent = create_openai_tools_agent(llm, tools, prompt)
+
+    agent_executor = AgentExecutor(
+    agent=agent, tools=tools, handle_parsing_errors=True, verbose=False)
+
+    with_message_history = RunnableWithMessageHistory(
+    agent_executor,
+    get_session_history,
+    input_messages_key="question",
+    history_messages_key="history"
+    )
+    
+    session_id = 123
+
+    response = with_message_history.invoke(
+        {"question": question},
+        config={"configurable": {"session_id": session_id}}
+    )
+
+    history = update_history(session_id, question, response["output"], indexes)
+
+    full_response = {
+        "question": question,
+        "output": response["output"],
+        "history": history
+    }
+
+    response_text = full_response['output']
+    response_social = f"{response_text}"
+    
+    st.markdown(response_social)
+    search_results = simple_hybrid_search(question, index_name, filter, search_url, search_credential, azure_endpoint, openai_api_key, openai_api_version, embedding_deployment_name)
+
+    # Initialize an empty list to store the nodes
+    sources_nodes = []
+    for result in search_results:
+        score = result["@search.score"]
+        path = result["doc_path"]
+        # Create a dictionary for the node
+        node = {"path": path, "score": score}
+        # Append the dictionary to the list of nodes
+        sources_nodes.append(node)
+    
+    with st.expander("See sources"):
+        for node in sources_nodes[0:5]:
+            file_name = os.path.basename(node["path"])
+            st.write("Source file: ", file_name)
+            raw_score = node["score"]
+            score = "{:.2f}".format(raw_score)
+            score = float(score)
+            if score >= 0.02:
+                st.write(":heavy_check_mark: High confidence. Search score: ", score)
+            elif score >= 0.01:
+                st.write(":warning: Medium confidence. Search score: ", score)
+            else:
+                st.write(":x: Low confidence. Search score: ", score)
+
+######################################
+####### SUMMARIZER
+######################################
+                
+    st.markdown('#')
+    
+    st.write("<h2 style='color: #F9423A;'>CONCLUSION", unsafe_allow_html=True)
+    
+    question = str(init_prompt)
+    
+    prompt = AGENT_CONCLUSION_PROMPT
+    
+    tools = [GetDocSearchResults_Tool(
+    indexes=indexes, k=10, reranker_th=1, sas_token='na')]
+    
+    COMPLETION_TOKENS = 4096
+
+    llm = AzureChatOpenAI(deployment_name=openai_deployment_name, openai_api_version=openai_api_version,
+                            openai_api_key=openai_api_key, azure_endpoint=azure_endpoint, temperature = 0)
+
+    agent = create_openai_tools_agent(llm, tools, prompt)
+
+    agent_executor = AgentExecutor(
+    agent=agent, tools=tools, handle_parsing_errors=True, verbose=False)
+
+    with_message_history = RunnableWithMessageHistory(
+    agent_executor,
+    get_session_history,
+    input_messages_key="question",
+    history_messages_key="history"
+    )
+    
+    session_id = 123
+
+    response = with_message_history.invoke(
+        {"question": question},
+        config={"configurable": {"session_id": session_id}}
+    )
+
+    history = update_history(session_id, question, response["output"], indexes)
+
+    full_response = {
+        "question": question,
+        "output": response["output"],
+        "history": history
+    }
+
+    response_text = full_response['output']
+    response_conclusion = f"{response_text}"
+    
+    st.markdown(response_conclusion)
+
+############################################################################
+
+#Save as word
+
+    def save_as_word(response_intro, response_content, response_social, response_conclusion):
         # Create a new Word document
         doc = Docx()
-        # Add the markdown content to the document
+        # Add markdown to the document
         doc.add_paragraph(response_intro)
-        # Add the markdown content to the document
         doc.add_paragraph(response_content)
+        doc.add_paragraph(response_social)
+        doc.add_paragraph(response_conclusion)
         # Save the document
         doc.save("ESIA Draft.docx")
 
