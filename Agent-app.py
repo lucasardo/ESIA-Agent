@@ -405,6 +405,9 @@ if init_prompt:
                 if line.startswith('####'):
                     # Add heading
                     doc.add_heading(line.lstrip('# '), level=2)
+                elif line.startswith('###'):
+                    # Add heading
+                    doc.add_heading(line.lstrip('# '), level=1)
                 else:
                     # Add regular paragraph
                     doc.add_paragraph(line)
