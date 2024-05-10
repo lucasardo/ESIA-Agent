@@ -137,7 +137,7 @@ if init_prompt:
     )
     
     #Prova
-    session_id = 125
+    session_id = 131
 
     response = with_message_history.invoke(
         {"question": question},
@@ -217,7 +217,7 @@ if init_prompt:
     )
     
     #Prova
-    session_id = 126
+    session_id = 132
 
     response = with_message_history.invoke(
         {"question": question},
@@ -294,7 +294,7 @@ if init_prompt:
     history_messages_key="history"
     )
     
-    session_id = 127
+    session_id = 133
 
     response = with_message_history.invoke(
         {"question": question},
@@ -371,7 +371,7 @@ if init_prompt:
     history_messages_key="history"
     )
     
-    session_id = 128
+    session_id = 134
 
     response = with_message_history.invoke(
         {"question": question},
