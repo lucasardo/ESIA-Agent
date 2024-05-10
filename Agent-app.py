@@ -121,13 +121,9 @@ if init_prompt:
 #######################
 
     st.write("<h2 style='color: #F9423A;'>INTRODUCTION", unsafe_allow_html=True)
-    question = str(init_prompt)
-
-    @st.cache(suppress_st_warning=True)
-    def cached_intro(question, index_name, session_id):
-        return generate_intro(question, index_name, session_id)      
+    question = str(init_prompt)  
     
-    response_intro = cached_intro(question, index_name, session_id)
+    response_intro = generate_intro(question, index_name, session_id)
     
     st.markdown(response_intro)
     
