@@ -489,13 +489,9 @@ def list_sources_nodes(search_results):
         
     return sources_nodes
 
-def generate_intro(question, indexes, session_id):
-    # Place your response generation logic here
-    # Assuming the logic you provided generates a response using external tools and APIs
+def generate_intro(question, llm, tools, indexes, session_id):
+
     prompt = AGENT_ENV_PROMPT
-    tools = [GetDocSearchResults_Tool(indexes=indexes, k=10, reranker_th=1, sas_token='na')]
-    llm = AzureChatOpenAI(deployment_name=openai_deployment_name, openai_api_version=openai_api_version,
-                            openai_api_key=openai_api_key, azure_endpoint=azure_endpoint, temperature=0)
 
     agent = create_openai_tools_agent(llm, tools, prompt)
 

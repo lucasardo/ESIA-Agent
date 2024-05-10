@@ -121,9 +121,13 @@ if init_prompt:
 #######################
 
     st.write("<h2 style='color: #F9423A;'>INTRODUCTION", unsafe_allow_html=True)
+
     question = str(init_prompt)  
-    
-    response_intro = generate_intro(question, index_name, session_id)
+    llm = AzureChatOpenAI(deployment_name=openai_deployment_name, openai_api_version=openai_api_version,
+                            openai_api_key=openai_api_key, azure_endpoint=azure_endpoint, temperature=0)
+    tools = [GetDocSearchResults_Tool(indexes=indexes, k=10, reranker_th=1, sas_token='na')]
+
+    response_intro = generate_intro(question, llm, tools, index_name, session_id)
     
     st.markdown(response_intro)
     
