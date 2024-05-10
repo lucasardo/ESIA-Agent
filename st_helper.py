@@ -488,7 +488,7 @@ def list_sources_nodes(search_results):
     return sources_nodes
 
 
-def generate_intro(question, llm, tools, indexes, session_id):
+def generate_intro(question, llm, tools, indexes, session_id, chat_history, store):
 
     prompt = AGENT_INTRO_PROMPT
 
@@ -499,7 +499,7 @@ def generate_intro(question, llm, tools, indexes, session_id):
 
     with_message_history = RunnableWithMessageHistory(
         agent_executor,
-        get_session_history,
+        get_session_history(store),
         input_messages_key="question",
         history_messages_key="history"
     )
@@ -509,7 +509,7 @@ def generate_intro(question, llm, tools, indexes, session_id):
         config={"configurable": {"session_id": session_id}}
     )
 
-    history = update_history(session_id, question, response["output"], indexes)
+    history = update_history(chat_history, session_id, question, response["output"], indexes)
 
     full_response = {
         "question": question,
@@ -523,7 +523,7 @@ def generate_intro(question, llm, tools, indexes, session_id):
     return response_intro
 
 
-def generate_env_chapter(question, llm, tools, indexes, session_id):
+def generate_env_chapter(question, llm, tools, indexes, session_id, chat_history, store):
 
     prompt = AGENT_ENV_PROMPT
 
@@ -534,7 +534,7 @@ def generate_env_chapter(question, llm, tools, indexes, session_id):
 
     with_message_history = RunnableWithMessageHistory(
         agent_executor,
-        get_session_history,
+        get_session_history(store),
         input_messages_key="question",
         history_messages_key="history"
     )
@@ -544,7 +544,7 @@ def generate_env_chapter(question, llm, tools, indexes, session_id):
         config={"configurable": {"session_id": session_id}}
     )
 
-    history = update_history(session_id, question, response["output"], indexes)
+    history = update_history(chat_history, session_id, question, response["output"], indexes)
 
     full_response = {
         "question": question,
@@ -558,7 +558,7 @@ def generate_env_chapter(question, llm, tools, indexes, session_id):
     return response_env
 
 
-def generate_social_chapter(question, llm, tools, indexes, session_id):
+def generate_social_chapter(question, llm, tools, indexes, session_id, chat_history, store):
 
     prompt = AGENT_ENV_PROMPT
 
@@ -569,7 +569,7 @@ def generate_social_chapter(question, llm, tools, indexes, session_id):
 
     with_message_history = RunnableWithMessageHistory(
         agent_executor,
-        get_session_history,
+        get_session_history(store),
         input_messages_key="question",
         history_messages_key="history"
     )
@@ -579,7 +579,7 @@ def generate_social_chapter(question, llm, tools, indexes, session_id):
         config={"configurable": {"session_id": session_id}}
     )
 
-    history = update_history(session_id, question, response["output"], indexes)
+    history = update_history(chat_history, session_id, question, response["output"], indexes)
 
     full_response = {
         "question": question,
@@ -593,7 +593,7 @@ def generate_social_chapter(question, llm, tools, indexes, session_id):
     return response_social
 
 
-def generate_conclusion(question, llm, tools, indexes, session_id):
+def generate_conclusion(question, llm, tools, indexes, session_id, chat_history, store):
 
     prompt = AGENT_CONCLUSION_PROMPT
 
@@ -604,7 +604,7 @@ def generate_conclusion(question, llm, tools, indexes, session_id):
 
     with_message_history = RunnableWithMessageHistory(
         agent_executor,
-        get_session_history,
+        get_session_history(store),
         input_messages_key="question",
         history_messages_key="history"
     )
@@ -614,7 +614,7 @@ def generate_conclusion(question, llm, tools, indexes, session_id):
         config={"configurable": {"session_id": session_id}}
     )
 
-    history = update_history(session_id, question, response["output"], indexes)
+    history = update_history(chat_history, session_id, question, response["output"], indexes)
 
     full_response = {
         "question": question,

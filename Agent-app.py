@@ -128,7 +128,7 @@ if init_prompt:
 
     st.write("<h2 style='color: #F9423A;'>INTRODUCTION", unsafe_allow_html=True)
 
-    response_intro = generate_intro(question, llm, tools, index_name, session_id)
+    response_intro = generate_intro(question, llm, tools, index_name, session_id, chat_history, store)
     st.markdown(response_intro)
     
     ### RETRIEVE CITANTIONS AND RRF SCORES
@@ -157,7 +157,7 @@ if init_prompt:
     session_id_2 = session_id + 2
     st.write("<h2 style='color: #F9423A;'>ENVIRONMENTAL IMPACT", unsafe_allow_html=True)
     
-    response_env = generate_env_chapter(question, llm, tools, index_name, session_id_2)
+    response_env = generate_env_chapter(question, llm, tools, index_name, session_id_2, chat_history, store)
     st.markdown(response_env)
 
     ### RETRIEVE CITANTIONS AND RRF SCORES
@@ -186,7 +186,7 @@ if init_prompt:
     session_id_3 = session_id + 3
     st.write("<h2 style='color: #F9423A;'>SOCIAL IMPACT", unsafe_allow_html=True)
         
-    response_social = generate_social_chapter(question, llm, tools, index_name, session_id_3)
+    response_social = generate_social_chapter(question, llm, tools, index_name, session_id_3, chat_history, store)
     st.markdown(response_social)
     
     ### RETRIEVE CITANTIONS AND RRF SCORES
@@ -215,7 +215,7 @@ if init_prompt:
     session_id_4 = session_id + 4
     st.write("<h2 style='color: #F9423A;'>CONCLUSION", unsafe_allow_html=True)
       
-    response_conclusion = generate_conclusion(question, llm, tools, index_name, session_id_4)
+    response_conclusion = generate_conclusion(question, llm, tools, index_name, session_id_4, chat_history, store)
     
     st.markdown(response_conclusion)
 
