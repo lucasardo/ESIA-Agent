@@ -430,14 +430,16 @@ class GetDocSearchResults_Tool(BaseTool):
         
         return results
 
+store = {}
+chat_history = {}
     
-def get_session_history(store, session_id: str) -> BaseChatMessageHistory:
+def get_session_history(session_id: str) -> BaseChatMessageHistory:
     if session_id not in store:
         store[session_id] = ChatMessageHistory()
     return store[session_id]
 
 
-def update_history(chat_history, session_id, human_msg, ai_msg, indexes):
+def update_history(session_id, human_msg, ai_msg, indexes):
     if session_id not in chat_history:
         chat_history[session_id] = []
         
@@ -474,7 +476,6 @@ def save_as_word(response_1, response_2, response_3, response_4):
 
     # Save the document
     doc.save("ESIA Draft.docx")
- 
    
 def list_sources_nodes(search_results):
     sources_nodes = []
@@ -487,8 +488,7 @@ def list_sources_nodes(search_results):
         
     return sources_nodes
 
-
-def generate_intro(question, llm, tools, indexes, session_id, chat_history, store):
+def generate_intro(question, llm, tools, indexes, session_id):
 
     prompt = AGENT_INTRO_PROMPT
 
@@ -499,7 +499,7 @@ def generate_intro(question, llm, tools, indexes, session_id, chat_history, stor
 
     with_message_history = RunnableWithMessageHistory(
         agent_executor,
-        get_session_history(store),
+        get_session_history,
         input_messages_key="question",
         history_messages_key="history"
     )
@@ -509,7 +509,7 @@ def generate_intro(question, llm, tools, indexes, session_id, chat_history, stor
         config={"configurable": {"session_id": session_id}}
     )
 
-    history = update_history(chat_history, session_id, question, response["output"], indexes)
+    history = update_history(session_id, question, response["output"], indexes)
 
     full_response = {
         "question": question,
@@ -523,7 +523,7 @@ def generate_intro(question, llm, tools, indexes, session_id, chat_history, stor
     return response_intro
 
 
-def generate_env_chapter(question, llm, tools, indexes, session_id, chat_history, store):
+def generate_env_chapter(question, llm, tools, indexes, session_id):
 
     prompt = AGENT_ENV_PROMPT
 
@@ -534,7 +534,7 @@ def generate_env_chapter(question, llm, tools, indexes, session_id, chat_history
 
     with_message_history = RunnableWithMessageHistory(
         agent_executor,
-        get_session_history(store),
+        get_session_history,
         input_messages_key="question",
         history_messages_key="history"
     )
@@ -544,7 +544,7 @@ def generate_env_chapter(question, llm, tools, indexes, session_id, chat_history
         config={"configurable": {"session_id": session_id}}
     )
 
-    history = update_history(chat_history, session_id, question, response["output"], indexes)
+    history = update_history(session_id, question, response["output"], indexes)
 
     full_response = {
         "question": question,
@@ -558,7 +558,7 @@ def generate_env_chapter(question, llm, tools, indexes, session_id, chat_history
     return response_env
 
 
-def generate_social_chapter(question, llm, tools, indexes, session_id, chat_history, store):
+def generate_social_chapter(question, llm, tools, indexes, session_id):
 
     prompt = AGENT_ENV_PROMPT
 
@@ -569,7 +569,7 @@ def generate_social_chapter(question, llm, tools, indexes, session_id, chat_hist
 
     with_message_history = RunnableWithMessageHistory(
         agent_executor,
-        get_session_history(store),
+        get_session_history,
         input_messages_key="question",
         history_messages_key="history"
     )
@@ -579,7 +579,7 @@ def generate_social_chapter(question, llm, tools, indexes, session_id, chat_hist
         config={"configurable": {"session_id": session_id}}
     )
 
-    history = update_history(chat_history, session_id, question, response["output"], indexes)
+    history = update_history(session_id, question, response["output"], indexes)
 
     full_response = {
         "question": question,
@@ -593,7 +593,7 @@ def generate_social_chapter(question, llm, tools, indexes, session_id, chat_hist
     return response_social
 
 
-def generate_conclusion(question, llm, tools, indexes, session_id, chat_history, store):
+def generate_conclusion(question, llm, tools, indexes, session_id):
 
     prompt = AGENT_CONCLUSION_PROMPT
 
@@ -604,7 +604,7 @@ def generate_conclusion(question, llm, tools, indexes, session_id, chat_history,
 
     with_message_history = RunnableWithMessageHistory(
         agent_executor,
-        get_session_history(store),
+        get_session_history,
         input_messages_key="question",
         history_messages_key="history"
     )
@@ -614,7 +614,7 @@ def generate_conclusion(question, llm, tools, indexes, session_id, chat_history,
         config={"configurable": {"session_id": session_id}}
     )
 
-    history = update_history(chat_history, session_id, question, response["output"], indexes)
+    history = update_history(session_id, question, response["output"], indexes)
 
     full_response = {
         "question": question,

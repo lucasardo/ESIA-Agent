@@ -23,12 +23,10 @@ search_credential = AzureKeyCredential(search_api_key)
 
 # Session variables
 
-session_id = 334214
+session_id = 3421488
 index_name = "esias-base-index"
 max_tokens = 4096
 dimensionality = 1536
-store = {}
-chat_history = {}
 
 embed_model = AzureOpenAIEmbedding(
     model=embedding_model,
@@ -128,7 +126,7 @@ if init_prompt:
 
     st.write("<h2 style='color: #F9423A;'>INTRODUCTION", unsafe_allow_html=True)
 
-    response_intro = generate_intro(question, llm, tools, index_name, session_id, chat_history, store)
+    response_intro = generate_intro(question, llm, tools, index_name, session_id)
     st.markdown(response_intro)
     
     ### RETRIEVE CITANTIONS AND RRF SCORES
@@ -157,7 +155,7 @@ if init_prompt:
     session_id_2 = session_id + 2
     st.write("<h2 style='color: #F9423A;'>ENVIRONMENTAL IMPACT", unsafe_allow_html=True)
     
-    response_env = generate_env_chapter(question, llm, tools, index_name, session_id_2, chat_history, store)
+    response_env = generate_env_chapter(question, llm, tools, index_name, session_id_2)
     st.markdown(response_env)
 
     ### RETRIEVE CITANTIONS AND RRF SCORES
@@ -186,7 +184,7 @@ if init_prompt:
     session_id_3 = session_id + 3
     st.write("<h2 style='color: #F9423A;'>SOCIAL IMPACT", unsafe_allow_html=True)
         
-    response_social = generate_social_chapter(question, llm, tools, index_name, session_id_3, chat_history, store)
+    response_social = generate_social_chapter(question, llm, tools, index_name, session_id_3)
     st.markdown(response_social)
     
     ### RETRIEVE CITANTIONS AND RRF SCORES
@@ -215,7 +213,7 @@ if init_prompt:
     session_id_4 = session_id + 4
     st.write("<h2 style='color: #F9423A;'>CONCLUSION", unsafe_allow_html=True)
       
-    response_conclusion = generate_conclusion(question, llm, tools, index_name, session_id_4, chat_history, store)
+    response_conclusion = generate_conclusion(question, llm, tools, index_name, session_id_4)
     
     st.markdown(response_conclusion)
 
@@ -233,3 +231,6 @@ if init_prompt:
         file_name="ESIA Draft.docx",
         mime="application/docx"
     )
+    
+    st.write(chat_history)
+    st.write(store)
