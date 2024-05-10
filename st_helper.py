@@ -491,7 +491,7 @@ def list_sources_nodes(search_results):
 
 def generate_intro(question, llm, tools, indexes, session_id):
 
-    prompt = AGENT_ENV_PROMPT
+    prompt = AGENT_INTRO_PROMPT
 
     agent = create_openai_tools_agent(llm, tools, prompt)
 
