@@ -149,3 +149,37 @@ if init_prompt:
             else:
                 st.write(":x: Low confidence. Search score: ", score)
     
+######################################
+####### ENVIRONMENTAL ENGINEER
+######################################
+                
+    st.markdown('#')
+    session_id = session_id + 1
+    st.write("<h2 style='color: #F9423A;'>ENVIRONMENTAL IMPACT", unsafe_allow_html=True)
+    
+    @st.cache(suppress_st_warning=True)
+    def cached_env_chapter(question, index_name, session_id):
+        return generate_env_chapter(question, index_name, session_id)      
+    
+    response_env = cached_env_chapter(question, index_name, session_id)
+    
+    st.markdown(response_env)
+
+    ### RETRIEVE CITANTIONS AND RRF SCORES
+    search_results = simple_hybrid_search(question, index_name, filter, search_url, search_credential, azure_endpoint, openai_api_key, openai_api_version, embedding_deployment_name)
+    sources_nodes = list_sources_nodes(search_results)
+ 
+    with st.expander("See sources"):
+        for node in sources_nodes[0:5]:
+            file_name = os.path.basename(node["path"])
+            st.write("Source file: ", file_name)
+            raw_score = node["score"]
+            score = "{:.2f}".format(raw_score)
+            score = float(score)
+            if score >= 0.02:
+                st.write(":heavy_check_mark: High confidence. Search score: ", score)
+            elif score >= 0.01:
+                st.write(":warning: Medium confidence. Search score: ", score)
+            else:
+                st.write(":x: Low confidence. Search score: ", score)
+
