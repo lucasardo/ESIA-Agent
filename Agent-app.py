@@ -1,22 +1,10 @@
-import os
-import streamlit as st
-from azure.search.documents import SearchClient
-from azure.search.documents.models import VectorizedQuery
-from azure.core.credentials import AzureKeyCredential
-from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
-from llama_index.core.schema import TextNode
-from llama_index.core import VectorStoreIndex, PromptHelper, ServiceContext
-from llama_index.llms.azure_openai import AzureOpenAI
-from llama_index.core.settings import Settings
-from docx import Document as Docx
-from docx.shared import RGBColor
-
-from st_helper import *
-session_id = 160
 
 ################################################################################################################
 
-# Configure the baseline configuration of the OpenAI library for Azure OpenAI Service.
+from st_helper import *
+
+# Environment variables
+
 azure_endpoint = st.secrets["azure_endpoint"]
 openai_api_key = st.secrets['openai_api_key']
 
@@ -33,6 +21,9 @@ search_service_name = st.secrets['search_service_name']
 search_url = f"https://{search_service_name}.search.windows.net/"
 search_credential = AzureKeyCredential(search_api_key)
 
+# Session variables
+
+session_id = random.randint(0, 1000000)
 index_name = "esias-base-index"
 max_tokens = 4096
 dimensionality = 1536
@@ -68,85 +59,95 @@ service_context = ServiceContext.from_defaults(
 Settings.llm = llmChat
 Settings.embed_model = embed_model
 
-###############################################################################
+################################################################################################################
+################################################################################################################
 
-# Set web page title, icon, and layout
+# Web page title
 st.set_page_config(
     page_title="ESIA Agent 💬 WSP",
     page_icon=":robot:",
-    layout="wide"  # Set layout to wide for better organization
+    layout="wide"
 )
 
 # Sidebar
 st.sidebar.image("https://download.logo.wine/logo/WSP_Global/WSP_Global-Logo.wine.png", width=100)
-
-# Button to start a new thread (restart the app)
 if st.sidebar.button("New Thread"):
     st.experimental_rerun()
-    user_input = ""
-
-# History of user inputs
 st.sidebar.markdown('#') 
 st.sidebar.header("History")
 st.sidebar.write("- I have to write an ESIA report for an offshore wind farm project, called 'ItaWind'. The wind farm will be located in Italy, off the coast of Molise.")
 
-st.write("<h1 style='color: #F9423A; text-align: center;'>Hi, how can I help you today?</h1>", unsafe_allow_html=True)
-st.write("<h5 style='color: #F9423A; text-align: center;'>I am your assistant for drafting ESIA reports. Give me information on the name of the project, type of infrastructure, location, and I will lay out a draft for you.</h5>", unsafe_allow_html=True)
+# Heading
+if "typewriter_executed" not in st.session_state:
+    st.session_state.typewriter_executed = False
 
+header = "Hi, how can I help you today?"
+subheader = "Dive into the world of environmental impact analysis with your AI guide, powered by WSP Digital Innovation!"
+
+if not st.session_state.typewriter_executed:
+    speed = 10
+    typewriter_header(text=header, speed=speed)
+    speed = 10
+    typewriter_subheader(text=subheader, speed=speed)   
+    st.session_state.typewriter_executed = True
+else:
+    st.markdown(f"<h1 style='color: #F9423A; text-align: center;'>{header}</h1>", unsafe_allow_html=True)
+    st.markdown(f"<h4 style='color: #F9423A; text-align: center;'>{subheader}</h4>", unsafe_allow_html=True)
+    
 st.markdown('#') 
 
-######################################
-####### PROJECT MANAGER
-######################################
+################################################################################################################
+################################################################################################################
 
 filter = ""
 
 st.markdown('#') 
 st.markdown('#') 
 
+### USER INPUT
+
 init_prompt = st.text_input("Ask anything")
 
-# React to user input
+### ANSWER GENERATION
+
 if init_prompt:
     
     st.write("Request for Proposal:", init_prompt)
     
     indexes = [index_name]
 
-    question = str(init_prompt)
-    
-    prompt = AGENT_INTRO_PROMPT
-    
-    tools = [GetDocSearchResults_Tool(
-    indexes=indexes, k=10, reranker_th=1, sas_token='na')]
-    
-    COMPLETION_TOKENS = 4096
+#######################
+####### PROJECT MANAGER
+#######################
 
+    st.write("<h2 style='color: #F9423A;'>INTRODUCTION", unsafe_allow_html=True)
+    question = str(init_prompt)
+
+    ### CREATE AGENT    
+    prompt = AGENT_INTRO_PROMPT
+    tools = [GetDocSearchResults_Tool(indexes=indexes, k=10, reranker_th=1, sas_token='na')]
+    COMPLETION_TOKENS = 4096
     llm = AzureChatOpenAI(deployment_name=openai_deployment_name, openai_api_version=openai_api_version,
                             openai_api_key=openai_api_key, azure_endpoint=azure_endpoint, temperature = 0)
    
     agent = create_openai_tools_agent(llm, tools, prompt)
 
     agent_executor = AgentExecutor(
-    agent=agent, tools=tools, handle_parsing_errors=True, verbose=False)
+        agent=agent, tools=tools, handle_parsing_errors=True, verbose=False)
 
     with_message_history = RunnableWithMessageHistory(
-    agent_executor,
-    get_session_history,
-    input_messages_key="question",
-    history_messages_key="history"
+        agent_executor,
+        get_session_history,
+        input_messages_key="question",
+        history_messages_key="history"
     )
     
-    #Prova
-    session_id = 131
-
+    ### GENERATE RESPONSE
     response = with_message_history.invoke(
         {"question": question},
         config={"configurable": {"session_id": session_id}}
     )
-
-    st.write("<h2 style='color: #F9423A;'>INTRODUCTION", unsafe_allow_html=True)
-
+    
     history = update_history(session_id, question, response["output"], indexes)
 
     full_response = {
@@ -159,17 +160,10 @@ if init_prompt:
     response_intro = f"{response_text}"
     
     st.markdown(response_intro)
+    
+    ### RETRIEVE CITANTIONS AND RRF SCORES
     search_results = simple_hybrid_search(question, index_name, filter, search_url, search_credential, azure_endpoint, openai_api_key, openai_api_version, embedding_deployment_name)
-
-    # Initialize an empty list to store the nodes
-    sources_nodes = []
-    for result in search_results:
-        score = result["@search.score"]
-        path = result["doc_path"]
-        # Create a dictionary for the node
-        node = {"path": path, "score": score}
-        # Append the dictionary to the list of nodes
-        sources_nodes.append(node)
+    sources_nodes = list_sources_nodes(search_results)
     
     with st.expander("See sources"):
         for node in sources_nodes[0:5]:
@@ -190,21 +184,15 @@ if init_prompt:
 ######################################
                 
     st.markdown('#')
-    
+    session_id = session_id + 1
     st.write("<h2 style='color: #F9423A;'>ENVIRONMENTAL IMPACT", unsafe_allow_html=True)
     
-    question = str(init_prompt)
-    
+    ### CREATE AGENT
     prompt = AGENT_ENV_PROMPT
-    
-    tools = [GetDocSearchResults_Tool(
-    indexes=indexes, k=10, reranker_th=1, sas_token='na')]
-    
-    COMPLETION_TOKENS = 4096
-
+    tools = [GetDocSearchResults_Tool(indexes=indexes, k=10, reranker_th=1, sas_token='na')]
     llm = AzureChatOpenAI(deployment_name=openai_deployment_name, openai_api_version=openai_api_version,
                             openai_api_key=openai_api_key, azure_endpoint=azure_endpoint, temperature = 0)
-
+    
     agent = create_openai_tools_agent(llm, tools, prompt)
 
     agent_executor = AgentExecutor(
@@ -217,9 +205,7 @@ if init_prompt:
     history_messages_key="history"
     )
     
-    #Prova
-    session_id = session_id+1
-
+    ### GENERATE RESPONSE
     response = with_message_history.invoke(
         {"question": question},
         config={"configurable": {"session_id": session_id}}
@@ -234,21 +220,14 @@ if init_prompt:
     }
 
     response_text = full_response['output']
-    response_content = f"{response_text}"
+    response_env = f"{response_text}"
     
-    st.markdown(response_content)
-    search_results = simple_hybrid_search(question, index_name, filter, search_url, search_credential, azure_endpoint, openai_api_key, openai_api_version, embedding_deployment_name)
+    st.markdown(response_env)
 
-    # Initialize an empty list to store the nodes
-    sources_nodes = []
-    for result in search_results:
-        score = result["@search.score"]
-        path = result["doc_path"]
-        # Create a dictionary for the node
-        node = {"path": path, "score": score}
-        # Append the dictionary to the list of nodes
-        sources_nodes.append(node)
-    
+    ### RETRIEVE CITANTIONS AND RRF SCORES
+    search_results = simple_hybrid_search(question, index_name, filter, search_url, search_credential, azure_endpoint, openai_api_key, openai_api_version, embedding_deployment_name)
+    sources_nodes = list_sources_nodes(search_results)
+ 
     with st.expander("See sources"):
         for node in sources_nodes[0:5]:
             file_name = os.path.basename(node["path"])
@@ -268,18 +247,12 @@ if init_prompt:
 ######################################
                 
     st.markdown('#')
-    
+    session_id = session_id + 2
     st.write("<h2 style='color: #F9423A;'>SOCIAL IMPACT", unsafe_allow_html=True)
     
-    question = str(init_prompt)
-    
+    ### CREATE AGENT
     prompt = AGENT_SOCIAL_PROMPT
-    
-    tools = [GetDocSearchResults_Tool(
-    indexes=indexes, k=10, reranker_th=1, sas_token='na')]
-    
-    COMPLETION_TOKENS = 4096
-
+    tools = [GetDocSearchResults_Tool(indexes=indexes, k=10, reranker_th=1, sas_token='na')]
     llm = AzureChatOpenAI(deployment_name=openai_deployment_name, openai_api_version=openai_api_version,
                             openai_api_key=openai_api_key, azure_endpoint=azure_endpoint, temperature = 0)
 
@@ -295,8 +268,7 @@ if init_prompt:
     history_messages_key="history"
     )
     
-    session_id = session_id+2
-
+    ### GENERATE RESPONSE
     response = with_message_history.invoke(
         {"question": question},
         config={"configurable": {"session_id": session_id}}
@@ -314,18 +286,11 @@ if init_prompt:
     response_social = f"{response_text}"
     
     st.markdown(response_social)
-    search_results = simple_hybrid_search(question, index_name, filter, search_url, search_credential, azure_endpoint, openai_api_key, openai_api_version, embedding_deployment_name)
-
-    # Initialize an empty list to store the nodes
-    sources_nodes = []
-    for result in search_results:
-        score = result["@search.score"]
-        path = result["doc_path"]
-        # Create a dictionary for the node
-        node = {"path": path, "score": score}
-        # Append the dictionary to the list of nodes
-        sources_nodes.append(node)
     
+    ### RETRIEVE CITANTIONS AND RRF SCORES
+    search_results = simple_hybrid_search(question, index_name, filter, search_url, search_credential, azure_endpoint, openai_api_key, openai_api_version, embedding_deployment_name)
+    sources_nodes = list_sources_nodes(search_results)
+
     with st.expander("See sources"):
         for node in sources_nodes[0:5]:
             file_name = os.path.basename(node["path"])
@@ -345,18 +310,12 @@ if init_prompt:
 ######################################
                 
     st.markdown('#')
-    
+    session_id = session_id+3
     st.write("<h2 style='color: #F9423A;'>CONCLUSION", unsafe_allow_html=True)
     
-    question = str(init_prompt)
-    
+    ### CREATE AGENT
     prompt = AGENT_CONCLUSION_PROMPT
-    
-    tools = [GetDocSearchResults_Tool(
-    indexes=indexes, k=10, reranker_th=1, sas_token='na')]
-    
-    COMPLETION_TOKENS = 4096
-
+    tools = [GetDocSearchResults_Tool(indexes=indexes, k=10, reranker_th=1, sas_token='na')]
     llm = AzureChatOpenAI(deployment_name=openai_deployment_name, openai_api_version=openai_api_version,
                             openai_api_key=openai_api_key, azure_endpoint=azure_endpoint, temperature = 0)
 
@@ -372,8 +331,7 @@ if init_prompt:
     history_messages_key="history"
     )
     
-    session_id = session_id+3
-
+    ### GENERATE RESPONSE
     response = with_message_history.invoke(
         {"question": question},
         config={"configurable": {"session_id": session_id}}
@@ -392,47 +350,12 @@ if init_prompt:
     
     st.markdown(response_conclusion)
 
-############################################################################
+################################################################################################################
+################################################################################################################
 
-#Save as word
-
-    def save_as_word(response_intro, response_content, response_social, response_conclusion):
-        # Create a new Word document
-        doc = Docx()
-        
-        # Function to add content with headings
-        def add_content_with_headings(content):
-            lines = content.split('\n')
-            for line in lines:
-                if line.startswith('####'):
-                    # Add heading
-                    heading = doc.add_heading(line.lstrip('# '), level=2)
-                    # Set heading color to red
-                    for run in heading.runs:
-                        run.font.color.rgb = RGBColor(255, 0, 0)  # Red color
-                elif line.startswith('###'):
-                    # Add heading
-                    # Add heading
-                    heading = doc.add_heading(line.lstrip('# '), level=1)
-                    # Set heading color to red
-                    for run in heading.runs:
-                        run.font.color.rgb = RGBColor(255, 0, 0)  # Red color
-                else:
-                    # Add regular paragraph
-                    doc.add_paragraph(line)
-            # Add empty paragraph for separation
-            doc.add_paragraph()
+# DOWNLOAD WORD DOCUMENT
     
-        # Add markdown to the document with headings
-        add_content_with_headings(response_intro)
-        add_content_with_headings(response_content)
-        add_content_with_headings(response_social)
-        add_content_with_headings(response_conclusion)
-    
-        # Save the document
-        doc.save("ESIA Draft.docx")
-    
-    save_as_word(response_intro, response_content, response_social, response_conclusion)
+    save_as_word(response_intro, response_env, response_social, response_conclusion)
     with open("ESIA Draft.docx", "rb") as f:
         bytes_data = f.read()
     st.download_button(
@@ -441,4 +364,3 @@ if init_prompt:
         file_name="ESIA Draft.docx",
         mime="application/docx"
     )
-
