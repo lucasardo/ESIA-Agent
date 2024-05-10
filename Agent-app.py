@@ -95,7 +95,7 @@ st.write("<h5 style='color: #F9423A; text-align: center;'>I am your assistant fo
 st.markdown('#') 
 
 ######################################
-####### ENVIRONMENTAL ENGINEER
+####### PROJECT MANAGER
 ######################################
 
 filter = ""
@@ -137,7 +137,7 @@ if init_prompt:
     )
     
     #Prova
-    session_id = 124
+    session_id = 125
 
     response = with_message_history.invoke(
         {"question": question},
@@ -217,7 +217,7 @@ if init_prompt:
     )
     
     #Prova
-    session_id = 124
+    session_id = 126
 
     response = with_message_history.invoke(
         {"question": question},
@@ -294,7 +294,7 @@ if init_prompt:
     history_messages_key="history"
     )
     
-    session_id = 124
+    session_id = 127
 
     response = with_message_history.invoke(
         {"question": question},
@@ -371,7 +371,7 @@ if init_prompt:
     history_messages_key="history"
     )
     
-    session_id = 124
+    session_id = 128
 
     response = with_message_history.invoke(
         {"question": question},
