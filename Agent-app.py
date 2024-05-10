@@ -12,6 +12,7 @@ from docx import Document as Docx
 from docx.shared import RGBColor
 
 from st_helper import *
+session_id = 140
 
 ################################################################################################################
 
@@ -217,7 +218,7 @@ if init_prompt:
     )
     
     #Prova
-    session_id = 132
+    session_id = session_id+1
 
     response = with_message_history.invoke(
         {"question": question},
@@ -294,7 +295,7 @@ if init_prompt:
     history_messages_key="history"
     )
     
-    session_id = 133
+    session_id = session_id+2
 
     response = with_message_history.invoke(
         {"question": question},
@@ -371,7 +372,7 @@ if init_prompt:
     history_messages_key="history"
     )
     
-    session_id = 134
+    session_id = session_id+3
 
     response = with_message_history.invoke(
         {"question": question},
