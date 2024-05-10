@@ -226,20 +226,19 @@ DOCSEARCH_PROMPT_TEXT_INTRO = """
 - Remember to respond in the same language as the question
 """
 
-DOCSEARCH_PROMPT_TEXT_CONTENT = """
+DOCSEARCH_PROMPT_TEXT_ENV = """
 
 On your ability to answer question based on fetched documents (sources):
 
 - Given parts extracted (CONTEXT) from one or more documents and a question, use the context to take cue in generating the ENVIRONMENTAL IMPACT of the Non-Technical Summary.
 - You only have to produce the ENVIRONMENTAL IMPACT chapter of the Non Technical Summary.
-- The ENVIRONMENTAL IMPACT chapter you have to produce must include these 6 sections: 1. Noise. 2. Soil 3. Water. 4. AIr Quality. 5. Landscape and visual impact. 6. Biodiversity.
-- Each section should consist of at least 2 paragraphs.
+- The ENVIRONMENTAL IMPACT chapter you have to produce must include these 6 sections: 1. Noise. 2. Soil 3. Water. 4. AIr Quality. 5. Landscape and visual impact. 6. Biodiversity. Each of this 6 section should consist of at least 2 paragraphs.
 - In the user question you will find information on the name of the project, the location, the technology used and the energy sector (wind power, solar power, hydroelectricity, waste). Use the CONTEXT to find information from projects in the same energy sector and use this as a starting point to generate the text for the 12 sections mentioned above.
 - Whenever you use information contained in documents retrieved from the CONTEXT, specify the name of the project described in that document.
 
 ## On your ability to answer question based on fetched documents (sources):
 - If there are conflicting information or multiple definitions or explanations, detail them all in your answer.
-- **You sould answer the question unsing information contained in the extracted parts (CONTEXT) below**.
+- **You can answer the question unsing information contained in the extracted parts (sources) below**.
 
 - Remember to respond in the same language as the question.
 """
@@ -287,9 +286,9 @@ AGENT_INTRO_PROMPT = ChatPromptTemplate.from_messages(
     ]
 )
 
-AGENT_CONTENT_PROMPT = ChatPromptTemplate.from_messages(
+AGENT_ENV_PROMPT = ChatPromptTemplate.from_messages(
     [
-        ("system", CUSTOM_CHATBOT_PREFIX + DOCSEARCH_PROMPT_TEXT_CONTENT),
+        ("system", CUSTOM_CHATBOT_PREFIX + DOCSEARCH_PROMPT_TEXT_ENV),
         MessagesPlaceholder(variable_name='history', optional=True),
         ("human", "{question}"),
         MessagesPlaceholder(variable_name='agent_scratchpad')
