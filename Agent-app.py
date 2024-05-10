@@ -127,7 +127,11 @@ if init_prompt:
                             openai_api_key=openai_api_key, azure_endpoint=azure_endpoint, temperature=0)
     tools = [GetDocSearchResults_Tool(indexes=indexes, k=3, reranker_th=0, sas_token='na')]
 
-    response_intro = generate_intro(question, llm, tools, index_name, session_id)
+    @st.cache(suppress_st_warning=True)
+    def cached_intro(question, llm, tools, index_name, session_id):
+        return generate_intro(question, llm, tools, index_name, session_id) 
+     
+    response_intro = cached_intro(question, llm, tools, index_name, session_id)
     
     st.markdown(response_intro)
     
