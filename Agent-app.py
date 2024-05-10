@@ -27,6 +27,8 @@ session_id = 334214
 index_name = "esias-base-index"
 max_tokens = 4096
 dimensionality = 1536
+store = {}
+chat_history = {}
 
 embed_model = AzureOpenAIEmbedding(
     model=embedding_model,

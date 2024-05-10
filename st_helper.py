@@ -430,17 +430,14 @@ class GetDocSearchResults_Tool(BaseTool):
         
         return results
 
-store = {}
-chat_history = {}
-
     
-def get_session_history(session_id: str) -> BaseChatMessageHistory:
+def get_session_history(store, session_id: str) -> BaseChatMessageHistory:
     if session_id not in store:
         store[session_id] = ChatMessageHistory()
     return store[session_id]
 
 
-def update_history(session_id, human_msg, ai_msg, indexes):
+def update_history(chat_history, session_id, human_msg, ai_msg, indexes):
     if session_id not in chat_history:
         chat_history[session_id] = []
         
