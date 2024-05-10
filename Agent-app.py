@@ -23,7 +23,7 @@ search_credential = AzureKeyCredential(search_api_key)
 
 # Session variables
 
-session_id = random.randint(0, 1000000)
+session_id = 3442
 index_name = "esias-base-index"
 max_tokens = 4096
 dimensionality = 1536
