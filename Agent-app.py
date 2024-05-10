@@ -118,7 +118,7 @@ if init_prompt:
     indexes = [index_name]
     llm = AzureChatOpenAI(deployment_name=openai_deployment_name, openai_api_version=openai_api_version,
                             openai_api_key=openai_api_key, azure_endpoint=azure_endpoint, temperature=0)
-    tools = [GetDocSearchResults_Tool(indexes=indexes, k=3, reranker_th=0, sas_token='na')]
+    tools = [GetDocSearchResults_Tool(indexes=indexes, k=1, reranker_th=0, sas_token='na')]
     
 #######################
 ####### PROJECT MANAGER

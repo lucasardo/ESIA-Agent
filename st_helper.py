@@ -333,7 +333,7 @@ def get_search_results(query: str, indexes: list,
 
     params = {'api-version': search_api_version}
 
-    k = 5
+    k = 1
     
     agg_search_results = dict()
 
