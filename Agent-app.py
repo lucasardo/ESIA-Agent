@@ -194,7 +194,7 @@ if init_prompt:
     
     question = str(init_prompt)
     
-    prompt = AGENT_CONTENT_PROMPT
+    prompt = AGENT_ENV_PROMPT
     
     tools = [GetDocSearchResults_Tool(
     indexes=indexes, k=10, reranker_th=1, sas_token='na')]
