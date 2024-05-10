@@ -23,7 +23,7 @@ search_credential = AzureKeyCredential(search_api_key)
 
 # Session variables
 
-session_id = 3442
+session_id = 334214
 index_name = "esias-base-index"
 max_tokens = 4096
 dimensionality = 1536
@@ -113,26 +113,20 @@ init_prompt = st.text_input("Ask anything")
 if init_prompt:
     
     st.write("Request for Proposal:", init_prompt)
-    
+    question = str(init_prompt)
+      
     indexes = [index_name]
-
+    llm = AzureChatOpenAI(deployment_name=openai_deployment_name, openai_api_version=openai_api_version,
+                            openai_api_key=openai_api_key, azure_endpoint=azure_endpoint, temperature=0)
+    tools = [GetDocSearchResults_Tool(indexes=indexes, k=3, reranker_th=0, sas_token='na')]
+    
 #######################
 ####### PROJECT MANAGER
 #######################
 
     st.write("<h2 style='color: #F9423A;'>INTRODUCTION", unsafe_allow_html=True)
 
-    question = str(init_prompt)  
-    llm = AzureChatOpenAI(deployment_name=openai_deployment_name, openai_api_version=openai_api_version,
-                            openai_api_key=openai_api_key, azure_endpoint=azure_endpoint, temperature=0)
-    tools = [GetDocSearchResults_Tool(indexes=indexes, k=3, reranker_th=0, sas_token='na')]
-
-    @st.cache(suppress_st_warning=True)
-    def cached_intro(question, llm, tools, index_name, session_id):
-        return generate_intro(question, llm, tools, index_name, session_id) 
-     
-    response_intro = cached_intro(question, llm, tools, index_name, session_id)
-    
+    response_intro = generate_intro(question, llm, tools, index_name, session_id)
     st.markdown(response_intro)
     
     ### RETRIEVE CITANTIONS AND RRF SCORES
@@ -153,33 +147,82 @@ if init_prompt:
             else:
                 st.write(":x: Low confidence. Search score: ", score)
     
-### DOWNLOAD WORD DOCUMENT
-    def save_as_word_small(response_1):
-        doc = Docx()
+######################################
+####### ENVIRONMENTAL ENGINEER
+######################################
+                
+    st.markdown('#')
+    session_id_2 = session_id + 2
+    st.write("<h2 style='color: #F9423A;'>ENVIRONMENTAL IMPACT", unsafe_allow_html=True)
+    
+    response_env = generate_env_chapter(question, llm, tools, index_name, session_id_2)
+    st.markdown(response_env)
+
+    ### RETRIEVE CITANTIONS AND RRF SCORES
+    search_results = simple_hybrid_search(question, index_name, filter, search_url, search_credential, azure_endpoint, openai_api_key, openai_api_version, embedding_deployment_name)
+    sources_nodes = list_sources_nodes(search_results)
+ 
+    with st.expander("See sources"):
+        for node in sources_nodes[0:5]:
+            file_name = os.path.basename(node["path"])
+            st.write("Source file: ", file_name)
+            raw_score = node["score"]
+            score = "{:.2f}".format(raw_score)
+            score = float(score)
+            if score >= 0.02:
+                st.write(":heavy_check_mark: High confidence. Search score: ", score)
+            elif score >= 0.01:
+                st.write(":warning: Medium confidence. Search score: ", score)
+            else:
+                st.write(":x: Low confidence. Search score: ", score)
+
+######################################
+####### ENVIRONMENTAL ECONOMIST
+######################################
+                
+    st.markdown('#')
+    session_id_3 = session_id + 3
+    st.write("<h2 style='color: #F9423A;'>SOCIAL IMPACT", unsafe_allow_html=True)
         
-        def add_content_with_headings(content):
-            lines = content.split('\n')
-            for line in lines:
-                if line.startswith('####'):
-                    heading = doc.add_heading(line.lstrip('# '), level=2)
-                    for run in heading.runs:
-                        run.font.color.rgb = RGBColor(255, 0, 0)
-                elif line.startswith('###'):
-                    heading = doc.add_heading(line.lstrip('# '), level=1)
-                    for run in heading.runs:
-                        run.font.color.rgb = RGBColor(255, 0, 0)
-                else:
-                    doc.add_paragraph(line)
-            doc.add_paragraph()
-
-        # Add markdown to the document with headings
-        add_content_with_headings(response_1)
-
-        # Save the document
-        doc.save("ESIA Draft.docx")
+    response_social = generate_social_chapter(question, llm, tools, index_name, session_id_3)
+    st.markdown(response_social)
     
-    save_as_word_small(response_intro)
+    ### RETRIEVE CITANTIONS AND RRF SCORES
+    search_results = simple_hybrid_search(question, index_name, filter, search_url, search_credential, azure_endpoint, openai_api_key, openai_api_version, embedding_deployment_name)
+    sources_nodes = list_sources_nodes(search_results)
+
+    with st.expander("See sources"):
+        for node in sources_nodes[0:5]:
+            file_name = os.path.basename(node["path"])
+            st.write("Source file: ", file_name)
+            raw_score = node["score"]
+            score = "{:.2f}".format(raw_score)
+            score = float(score)
+            if score >= 0.02:
+                st.write(":heavy_check_mark: High confidence. Search score: ", score)
+            elif score >= 0.01:
+                st.write(":warning: Medium confidence. Search score: ", score)
+            else:
+                st.write(":x: Low confidence. Search score: ", score)
+
+######################################
+####### SUMMARIZER
+######################################
+                
+    st.markdown('#')
+    session_id_4 = session_id + 4
+    st.write("<h2 style='color: #F9423A;'>CONCLUSION", unsafe_allow_html=True)
+      
+    response_conclusion = generate_conclusion(question, llm, tools, index_name, session_id_4)
     
+    st.markdown(response_conclusion)
+
+################################################################################################################
+################################################################################################################
+
+# DOWNLOAD WORD DOCUMENT
+    
+    save_as_word(response_intro, response_env, response_social, response_conclusion)
     with open("ESIA Draft.docx", "rb") as f:
         bytes_data = f.read()
     st.download_button(

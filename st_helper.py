@@ -477,7 +477,8 @@ def save_as_word(response_1, response_2, response_3, response_4):
 
     # Save the document
     doc.save("ESIA Draft.docx")
-    
+ 
+   
 def list_sources_nodes(search_results):
     sources_nodes = []
     
@@ -488,6 +489,7 @@ def list_sources_nodes(search_results):
         sources_nodes.append(node)
         
     return sources_nodes
+
 
 def generate_intro(question, llm, tools, indexes, session_id):
 
@@ -505,7 +507,6 @@ def generate_intro(question, llm, tools, indexes, session_id):
         history_messages_key="history"
     )
 
-    # Generate response using the message history
     response = with_message_history.invoke(
         {"question": question},
         config={"configurable": {"session_id": session_id}}
@@ -525,13 +526,9 @@ def generate_intro(question, llm, tools, indexes, session_id):
     return response_intro
 
 
-def generate_env_chapter(question, indexes, session_id):
-    # Place your response generation logic here
-    # Assuming the logic you provided generates a response using external tools and APIs
+def generate_env_chapter(question, llm, tools, indexes, session_id):
+
     prompt = AGENT_ENV_PROMPT
-    tools = [GetDocSearchResults_Tool(indexes=indexes, k=10, reranker_th=1, sas_token='na')]
-    llm = AzureChatOpenAI(deployment_name=openai_deployment_name, openai_api_version=openai_api_version,
-                            openai_api_key=openai_api_key, azure_endpoint=azure_endpoint, temperature=0)
 
     agent = create_openai_tools_agent(llm, tools, prompt)
 
@@ -545,7 +542,6 @@ def generate_env_chapter(question, indexes, session_id):
         history_messages_key="history"
     )
 
-    # Generate response using the message history
     response = with_message_history.invoke(
         {"question": question},
         config={"configurable": {"session_id": session_id}}
@@ -565,13 +561,9 @@ def generate_env_chapter(question, indexes, session_id):
     return response_env
 
 
-def generate_social_chapter(question, indexes, session_id):
-    # Place your response generation logic here
-    # Assuming the logic you provided generates a response using external tools and APIs
+def generate_social_chapter(question, llm, tools, indexes, session_id):
+
     prompt = AGENT_ENV_PROMPT
-    tools = [GetDocSearchResults_Tool(indexes=indexes, k=10, reranker_th=1, sas_token='na')]
-    llm = AzureChatOpenAI(deployment_name=openai_deployment_name, openai_api_version=openai_api_version,
-                            openai_api_key=openai_api_key, azure_endpoint=azure_endpoint, temperature=0)
 
     agent = create_openai_tools_agent(llm, tools, prompt)
 
@@ -585,7 +577,6 @@ def generate_social_chapter(question, indexes, session_id):
         history_messages_key="history"
     )
 
-    # Generate response using the message history
     response = with_message_history.invoke(
         {"question": question},
         config={"configurable": {"session_id": session_id}}
@@ -605,13 +596,9 @@ def generate_social_chapter(question, indexes, session_id):
     return response_social
 
 
-def generate_conclusion(question, indexes, session_id):
-    # Place your response generation logic here
-    # Assuming the logic you provided generates a response using external tools and APIs
+def generate_conclusion(question, llm, tools, indexes, session_id):
+
     prompt = AGENT_CONCLUSION_PROMPT
-    tools = [GetDocSearchResults_Tool(indexes=indexes, k=10, reranker_th=1, sas_token='na')]
-    llm = AzureChatOpenAI(deployment_name=openai_deployment_name, openai_api_version=openai_api_version,
-                            openai_api_key=openai_api_key, azure_endpoint=azure_endpoint, temperature=0)
 
     agent = create_openai_tools_agent(llm, tools, prompt)
 
@@ -625,7 +612,6 @@ def generate_conclusion(question, indexes, session_id):
         history_messages_key="history"
     )
 
-    # Generate response using the message history
     response = with_message_history.invoke(
         {"question": question},
         config={"configurable": {"session_id": session_id}}
