@@ -124,10 +124,10 @@ if init_prompt:
     question = str(init_prompt)
 
     @st.cache(suppress_st_warning=True)
-    def cached_intro(question):
-        return generate_intro(question)      
+    def cached_intro(question, index_name, session_id):
+        return generate_intro(question, index_name, session_id)      
     
-    response_intro = cached_intro(question)
+    response_intro = cached_intro(question, index_name, session_id)
     
     st.markdown(response_intro)
     
@@ -158,10 +158,10 @@ if init_prompt:
     st.write("<h2 style='color: #F9423A;'>ENVIRONMENTAL IMPACT", unsafe_allow_html=True)
     
     @st.cache(suppress_st_warning=True)
-    def cached_env_chapter(question):
-        return generate_env_chapter(question)      
+    def cached_env_chapter(question, index_name, session_id):
+        return generate_env_chapter(question, index_name, session_id)      
     
-    response_env = cached_env_chapter(question)
+    response_env = cached_env_chapter(question, index_name, session_id)
     
     st.markdown(response_env)
 
@@ -194,10 +194,10 @@ if init_prompt:
     ### TEST
     
     @st.cache(suppress_st_warning=True)
-    def cached_social_chapter(question):
-        return generate_social_chapter(question)      
+    def cached_social_chapter(question, index_name, session_id):
+        return generate_social_chapter(question, index_name, session_id)      
     
-    response_social = cached_social_chapter(question)
+    response_social = cached_social_chapter(question, index_name, session_id)
     
     st.markdown(response_social)
     
@@ -230,10 +230,10 @@ if init_prompt:
     ### TEST
     
     @st.cache(suppress_st_warning=True)
-    def cached_conclusion(question):
-        return generate_conclusion(question)      
+    def cached_conclusion(question, index_name, session_id):
+        return generate_conclusion(question, index_name, session_id)      
     
-    response_conclusion = cached_conclusion(question)
+    response_conclusion = cached_conclusion(question, index_name, session_id)
     
     st.markdown(response_conclusion)
 
