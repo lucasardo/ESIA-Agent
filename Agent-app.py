@@ -88,7 +88,7 @@ if st.sidebar.button("New Thread"):
 # History of user inputs
 st.sidebar.markdown('#') 
 st.sidebar.header("History")
-st.sidebar.write("- I have to write an ESIA for an offshore wind farm project, called 'ItaWind'. The wind farm will be located in Italy, off the coast of Molise.")
+st.sidebar.write("- I have to write an ESIA report for an offshore wind farm project, called 'ItaWind'. The wind farm will be located in Italy, off the coast of Molise.")
 
 st.write("<h1 style='color: #F9423A; text-align: center;'>Hi, how can I help you today?</h1>", unsafe_allow_html=True)
 st.write("<h5 style='color: #F9423A; text-align: center;'>I am your assistant for drafting ESIA reports. Give me information on the name of the project, type of infrastructure, location, and I will lay out a draft for you.</h5>", unsafe_allow_html=True)
