@@ -488,3 +488,162 @@ def list_sources_nodes(search_results):
         sources_nodes.append(node)
         
     return sources_nodes
+
+def generate_intro(question, indexes, session_id):
+    # Place your response generation logic here
+    # Assuming the logic you provided generates a response using external tools and APIs
+    prompt = AGENT_ENV_PROMPT
+    tools = [GetDocSearchResults_Tool(indexes=indexes, k=10, reranker_th=1, sas_token='na')]
+    llm = AzureChatOpenAI(deployment_name=openai_deployment_name, openai_api_version=openai_api_version,
+                            openai_api_key=openai_api_key, azure_endpoint=azure_endpoint, temperature=0)
+
+    agent = create_openai_tools_agent(llm, tools, prompt)
+
+    agent_executor = AgentExecutor(
+        agent=agent, tools=tools, handle_parsing_errors=True, verbose=False)
+
+    with_message_history = RunnableWithMessageHistory(
+        agent_executor,
+        get_session_history,
+        input_messages_key="question",
+        history_messages_key="history"
+    )
+
+    # Generate response using the message history
+    response = with_message_history.invoke(
+        {"question": question},
+        config={"configurable": {"session_id": session_id}}
+    )
+
+    history = update_history(session_id, question, response["output"], indexes)
+
+    full_response = {
+        "question": question,
+        "output": response["output"],
+        "history": history
+    }
+
+    response_text = full_response['output']
+    response_intro = f"{response_text}"
+
+    return response_intro
+
+
+def generate_env_chapter(question, indexes, session_id):
+    # Place your response generation logic here
+    # Assuming the logic you provided generates a response using external tools and APIs
+    prompt = AGENT_ENV_PROMPT
+    tools = [GetDocSearchResults_Tool(indexes=indexes, k=10, reranker_th=1, sas_token='na')]
+    llm = AzureChatOpenAI(deployment_name=openai_deployment_name, openai_api_version=openai_api_version,
+                            openai_api_key=openai_api_key, azure_endpoint=azure_endpoint, temperature=0)
+
+    agent = create_openai_tools_agent(llm, tools, prompt)
+
+    agent_executor = AgentExecutor(
+        agent=agent, tools=tools, handle_parsing_errors=True, verbose=False)
+
+    with_message_history = RunnableWithMessageHistory(
+        agent_executor,
+        get_session_history,
+        input_messages_key="question",
+        history_messages_key="history"
+    )
+
+    # Generate response using the message history
+    response = with_message_history.invoke(
+        {"question": question},
+        config={"configurable": {"session_id": session_id}}
+    )
+
+    history = update_history(session_id, question, response["output"], indexes)
+
+    full_response = {
+        "question": question,
+        "output": response["output"],
+        "history": history
+    }
+
+    response_text = full_response['output']
+    response_env = f"{response_text}"
+
+    return response_env
+
+
+def generate_social_chapter(question, indexes, session_id):
+    # Place your response generation logic here
+    # Assuming the logic you provided generates a response using external tools and APIs
+    prompt = AGENT_ENV_PROMPT
+    tools = [GetDocSearchResults_Tool(indexes=indexes, k=10, reranker_th=1, sas_token='na')]
+    llm = AzureChatOpenAI(deployment_name=openai_deployment_name, openai_api_version=openai_api_version,
+                            openai_api_key=openai_api_key, azure_endpoint=azure_endpoint, temperature=0)
+
+    agent = create_openai_tools_agent(llm, tools, prompt)
+
+    agent_executor = AgentExecutor(
+        agent=agent, tools=tools, handle_parsing_errors=True, verbose=False)
+
+    with_message_history = RunnableWithMessageHistory(
+        agent_executor,
+        get_session_history,
+        input_messages_key="question",
+        history_messages_key="history"
+    )
+
+    # Generate response using the message history
+    response = with_message_history.invoke(
+        {"question": question},
+        config={"configurable": {"session_id": session_id}}
+    )
+
+    history = update_history(session_id, question, response["output"], indexes)
+
+    full_response = {
+        "question": question,
+        "output": response["output"],
+        "history": history
+    }
+
+    response_text = full_response['output']
+    response_social = f"{response_text}"
+
+    return response_social
+
+
+def generate_conclusion(question, indexes, session_id):
+    # Place your response generation logic here
+    # Assuming the logic you provided generates a response using external tools and APIs
+    prompt = AGENT_CONCLUSION_PROMPT
+    tools = [GetDocSearchResults_Tool(indexes=indexes, k=10, reranker_th=1, sas_token='na')]
+    llm = AzureChatOpenAI(deployment_name=openai_deployment_name, openai_api_version=openai_api_version,
+                            openai_api_key=openai_api_key, azure_endpoint=azure_endpoint, temperature=0)
+
+    agent = create_openai_tools_agent(llm, tools, prompt)
+
+    agent_executor = AgentExecutor(
+        agent=agent, tools=tools, handle_parsing_errors=True, verbose=False)
+
+    with_message_history = RunnableWithMessageHistory(
+        agent_executor,
+        get_session_history,
+        input_messages_key="question",
+        history_messages_key="history"
+    )
+
+    # Generate response using the message history
+    response = with_message_history.invoke(
+        {"question": question},
+        config={"configurable": {"session_id": session_id}}
+    )
+
+    history = update_history(session_id, question, response["output"], indexes)
+
+    full_response = {
+        "question": question,
+        "output": response["output"],
+        "history": history
+    }
+
+    response_text = full_response['output']
+    response_conclusion = f"{response_text}"
+
+    return response_conclusion
