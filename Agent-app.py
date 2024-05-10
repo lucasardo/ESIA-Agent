@@ -123,41 +123,11 @@ if init_prompt:
     st.write("<h2 style='color: #F9423A;'>INTRODUCTION", unsafe_allow_html=True)
     question = str(init_prompt)
 
-    ### CREATE AGENT    
-    prompt = AGENT_INTRO_PROMPT
-    tools = [GetDocSearchResults_Tool(indexes=indexes, k=10, reranker_th=1, sas_token='na')]
-    COMPLETION_TOKENS = 4096
-    llm = AzureChatOpenAI(deployment_name=openai_deployment_name, openai_api_version=openai_api_version,
-                            openai_api_key=openai_api_key, azure_endpoint=azure_endpoint, temperature = 0)
-   
-    agent = create_openai_tools_agent(llm, tools, prompt)
-
-    agent_executor = AgentExecutor(
-        agent=agent, tools=tools, handle_parsing_errors=True, verbose=False)
-
-    with_message_history = RunnableWithMessageHistory(
-        agent_executor,
-        get_session_history,
-        input_messages_key="question",
-        history_messages_key="history"
-    )
+    @st.cache(suppress_st_warning=True)
+    def cached_intro(question):
+        return generate_intro(question)      
     
-    ### GENERATE RESPONSE
-    response = with_message_history.invoke(
-        {"question": question},
-        config={"configurable": {"session_id": session_id}}
-    )
-    
-    history = update_history(session_id, question, response["output"], indexes)
-
-    full_response = {
-        "question": question,
-        "output": response["output"],
-        "history": history
-    }
-
-    response_text = full_response['output']
-    response_intro = f"{response_text}"
+    response_intro = cached_intro(question)
     
     st.markdown(response_intro)
     
@@ -187,40 +157,11 @@ if init_prompt:
     session_id = session_id + 1
     st.write("<h2 style='color: #F9423A;'>ENVIRONMENTAL IMPACT", unsafe_allow_html=True)
     
-    ### CREATE AGENT
-    prompt = AGENT_ENV_PROMPT
-    tools = [GetDocSearchResults_Tool(indexes=indexes, k=10, reranker_th=1, sas_token='na')]
-    llm = AzureChatOpenAI(deployment_name=openai_deployment_name, openai_api_version=openai_api_version,
-                            openai_api_key=openai_api_key, azure_endpoint=azure_endpoint, temperature = 0)
+    @st.cache(suppress_st_warning=True)
+    def cached_env_chapter(question):
+        return generate_env_chapter(question)      
     
-    agent = create_openai_tools_agent(llm, tools, prompt)
-
-    agent_executor = AgentExecutor(
-    agent=agent, tools=tools, handle_parsing_errors=True, verbose=False)
-
-    with_message_history = RunnableWithMessageHistory(
-    agent_executor,
-    get_session_history,
-    input_messages_key="question",
-    history_messages_key="history"
-    )
-    
-    ### GENERATE RESPONSE
-    response = with_message_history.invoke(
-        {"question": question},
-        config={"configurable": {"session_id": session_id}}
-    )
-
-    history = update_history(session_id, question, response["output"], indexes)
-
-    full_response = {
-        "question": question,
-        "output": response["output"],
-        "history": history
-    }
-
-    response_text = full_response['output']
-    response_env = f"{response_text}"
+    response_env = cached_env_chapter(question)
     
     st.markdown(response_env)
 
@@ -250,40 +191,13 @@ if init_prompt:
     session_id = session_id + 2
     st.write("<h2 style='color: #F9423A;'>SOCIAL IMPACT", unsafe_allow_html=True)
     
-    ### CREATE AGENT
-    prompt = AGENT_SOCIAL_PROMPT
-    tools = [GetDocSearchResults_Tool(indexes=indexes, k=10, reranker_th=1, sas_token='na')]
-    llm = AzureChatOpenAI(deployment_name=openai_deployment_name, openai_api_version=openai_api_version,
-                            openai_api_key=openai_api_key, azure_endpoint=azure_endpoint, temperature = 0)
-
-    agent = create_openai_tools_agent(llm, tools, prompt)
-
-    agent_executor = AgentExecutor(
-    agent=agent, tools=tools, handle_parsing_errors=True, verbose=False)
-
-    with_message_history = RunnableWithMessageHistory(
-    agent_executor,
-    get_session_history,
-    input_messages_key="question",
-    history_messages_key="history"
-    )
+    ### TEST
     
-    ### GENERATE RESPONSE
-    response = with_message_history.invoke(
-        {"question": question},
-        config={"configurable": {"session_id": session_id}}
-    )
-
-    history = update_history(session_id, question, response["output"], indexes)
-
-    full_response = {
-        "question": question,
-        "output": response["output"],
-        "history": history
-    }
-
-    response_text = full_response['output']
-    response_social = f"{response_text}"
+    @st.cache(suppress_st_warning=True)
+    def cached_social_chapter(question):
+        return generate_social_chapter(question)      
+    
+    response_social = cached_social_chapter(question)
     
     st.markdown(response_social)
     
@@ -313,40 +227,13 @@ if init_prompt:
     session_id = session_id+3
     st.write("<h2 style='color: #F9423A;'>CONCLUSION", unsafe_allow_html=True)
     
-    ### CREATE AGENT
-    prompt = AGENT_CONCLUSION_PROMPT
-    tools = [GetDocSearchResults_Tool(indexes=indexes, k=10, reranker_th=1, sas_token='na')]
-    llm = AzureChatOpenAI(deployment_name=openai_deployment_name, openai_api_version=openai_api_version,
-                            openai_api_key=openai_api_key, azure_endpoint=azure_endpoint, temperature = 0)
-
-    agent = create_openai_tools_agent(llm, tools, prompt)
-
-    agent_executor = AgentExecutor(
-    agent=agent, tools=tools, handle_parsing_errors=True, verbose=False)
-
-    with_message_history = RunnableWithMessageHistory(
-    agent_executor,
-    get_session_history,
-    input_messages_key="question",
-    history_messages_key="history"
-    )
+    ### TEST
     
-    ### GENERATE RESPONSE
-    response = with_message_history.invoke(
-        {"question": question},
-        config={"configurable": {"session_id": session_id}}
-    )
-
-    history = update_history(session_id, question, response["output"], indexes)
-
-    full_response = {
-        "question": question,
-        "output": response["output"],
-        "history": history
-    }
-
-    response_text = full_response['output']
-    response_conclusion = f"{response_text}"
+    @st.cache(suppress_st_warning=True)
+    def cached_conclusion(question):
+        return generate_conclusion(question)      
+    
+    response_conclusion = cached_conclusion(question)
     
     st.markdown(response_conclusion)
 
