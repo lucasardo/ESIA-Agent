@@ -22,7 +22,7 @@ search_credential = AzureKeyCredential(search_api_key)
 
 # Session variables
 
-session_id = random.randint(1, 1000000)
+session_id = 123
 index_name = "esias-base-index"
 
 embed_model = AzureOpenAIEmbedding(
