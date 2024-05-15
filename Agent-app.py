@@ -1,6 +1,7 @@
 
 from st_helper import *
 from utils import *
+from langchain_core.output_parsers import StrOutputParser
 
 # Environment variables
 
@@ -219,7 +220,14 @@ if init_prompt:
     st.markdown('#')
     st.write("<h2 style='color: #F9423A;'>CONCLUSION", unsafe_allow_html=True)
       
-    response_conclusion = generate_conclusion(question, llm, tools, index_name, session_id)
+    rag_chain = (
+    {"context": store, "question": RunnablePassthrough()}
+    | question
+    | llm
+    | StrOutputParser()
+    )
+    
+    response_conclusion = rag_chain.invoke("Summarize the stored information")
     
     st.markdown(response_conclusion)
 
