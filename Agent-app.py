@@ -224,16 +224,22 @@ if init_prompt:
     st.write(chat_history)
     st.write(store)
     
+    # Generate Word document
     word_data = save_as_word(response_intro, response_env, response_social, response_conclusion)
-    # Convert to downloadable format
-    b64_word_data = base64.b64encode(word_data).decode()
 
-    # JavaScript to create a clickable download link
-    download_link = f"""
-        <a href="data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,{b64_word_data}" download="ESIA_Draft.docx">
-            Click here to download your document
-        </a>
+    # Ensure word_data is not None
+    if word_data is None:
+        st.error("Failed to generate the Word document.")
+    else:
+        # Convert to downloadable format
+        b64_word_data = base64.b64encode(word_data).decode()
+
+        # JavaScript to create a clickable download link
+        download_link = f"""
+            <a href="data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,{b64_word_data}" download="ESIA_Draft.docx">
+                Click here to download your document
+            </a>
         """
 
-    # Display the clickable download link in Streamlit
-    st.markdown(download_link, unsafe_allow_html=True)
+        # Display the clickable download link in Streamlit
+        st.markdown(download_link, unsafe_allow_html=True)

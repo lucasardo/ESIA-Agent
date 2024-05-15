@@ -1,6 +1,7 @@
 import os
 import streamlit as st
 import openai
+from io import BytesIO
 import base64
 from azure.search.documents import SearchClient
 from azure.search.documents.models import VectorizedQuery
@@ -452,8 +453,8 @@ def update_history(session_id, human_msg, ai_msg, indexes):
     return chat_history[session_id]
 
 def save_as_word(response_1, response_2, response_3, response_4):
-    doc = Docx()
-    
+    doc = Document()
+
     def add_content_with_headings(content):
         lines = content.split('\n')
         for line in lines:
@@ -469,14 +470,17 @@ def save_as_word(response_1, response_2, response_3, response_4):
                 doc.add_paragraph(line)
         doc.add_paragraph()
 
-    # Add markdown to the document with headings
+    # Add content to the document
     add_content_with_headings(response_1)
     add_content_with_headings(response_2)
     add_content_with_headings(response_3)
     add_content_with_headings(response_4)
 
-    # Save the document
-    doc.save("ESIA Draft.docx")
+    # Save the document to a bytes buffer
+    buffer = BytesIO()
+    doc.save(buffer)
+    buffer.seek(0)  # Ensure the buffer's pointer is at the beginning
+    return buffer.getvalue()
    
 def list_sources_nodes(search_results):
     sources_nodes = []
