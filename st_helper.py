@@ -453,7 +453,7 @@ def update_history(session_id, human_msg, ai_msg, indexes):
     return chat_history[session_id]
 
 def save_as_word(response_1, response_2, response_3, response_4):
-    doc = Document()
+    doc = Docx()
 
     def add_content_with_headings(content):
         lines = content.split('\n')
