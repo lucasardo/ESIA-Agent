@@ -59,7 +59,7 @@ service_context = ServiceContext.from_defaults(
 Settings.llm = llmChat
 Settings.embed_model = embed_model
 
-client = Client()
+client = Client(api_key=langsmith_key)
 
 ################################################################################################################
 ################################################################################################################
