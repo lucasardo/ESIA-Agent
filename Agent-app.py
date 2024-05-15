@@ -17,15 +17,12 @@ search_api_key = st.secrets['search_api_key']
 search_api_version = st.secrets['search_api_version']
 search_service_name = st.secrets['search_service_name']
 
-langsmith_key = st.secrets['langsmith_key']
-langchain_tracing = st.secrets['langchain_tracing_v2']
-
 search_url = f"https://{search_service_name}.search.windows.net/"
 search_credential = AzureKeyCredential(search_api_key)
 
 # Session variables
 
-session_id = 123
+session_id = 1
 index_name = "esias-base-index"
 
 embed_model = AzureOpenAIEmbedding(
@@ -58,8 +55,6 @@ service_context = ServiceContext.from_defaults(
 
 Settings.llm = llmChat
 Settings.embed_model = embed_model
-
-client = Client(api_key=langsmith_key)
 
 ################################################################################################################
 ################################################################################################################
@@ -128,10 +123,7 @@ if init_prompt:
 
     st.write("<h2 style='color: #F9423A;'>INTRODUCTION", unsafe_allow_html=True)
 
-    @traceable
-    def _generate_intro(question, llm, tools, index_name, session_id):
-        return generate_intro(question, llm, tools, index_name, session_id)
-    response_intro = _generate_intro(question, llm, tools, index_name, session_id)
+    response_intro = generate_intro(question, llm, tools, index_name, session_id)
     st.markdown(response_intro)
     
     ### RETRIEVE CITATIONS AND RRF SCORES
