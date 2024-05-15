@@ -133,7 +133,7 @@ if init_prompt:
     response_intro = _generate_intro(question, llm, tools, index_name, session_id)
     st.markdown(response_intro)
     
-    ### RETRIEVE CITATIONS AND RRF SCORES
+    ### RETRIEVE CITANTIONS AND RRF SCORES
     search_results = simple_hybrid_search(question, index_name, filter, search_url, search_credential, azure_endpoint, openai_api_key, openai_api_version, embedding_deployment_name)
     sources_nodes = list_sources_nodes(search_results)
     
@@ -150,10 +150,95 @@ if init_prompt:
                 st.write(":warning: Medium confidence. Search score: ", score)
             else:
                 st.write(":x: Low confidence. Search score: ", score)
+    
+######################################
+####### ENVIRONMENTAL ENGINEER
+######################################
+                
+    st.markdown('#')
+    session_id_2 = session_id + 2
+    st.write("<h2 style='color: #F9423A;'>ENVIRONMENTAL IMPACT", unsafe_allow_html=True)
+    
+    @st.cache_data
+    def _generate_env_chapter(question, _llm, _tools, index_name, session_id_2):
+        return generate_env_chapter(question, llm, tools, index_name, session_id_2)
+    
+    response_env = _generate_env_chapter(question, llm, tools, index_name, session_id_2)
+    st.markdown(response_env)
+
+    ### RETRIEVE CITANTIONS AND RRF SCORES
+    search_results = simple_hybrid_search(question, index_name, filter, search_url, search_credential, azure_endpoint, openai_api_key, openai_api_version, embedding_deployment_name)
+    sources_nodes = list_sources_nodes(search_results)
  
+    with st.expander("See sources"):
+        for node in sources_nodes[0:5]:
+            file_name = os.path.basename(node["path"])
+            st.write("Source file: ", file_name)
+            raw_score = node["score"]
+            score = "{:.2f}".format(raw_score)
+            score = float(score)
+            if score >= 0.02:
+                st.write(":heavy_check_mark: High confidence. Search score: ", score)
+            elif score >= 0.01:
+                st.write(":warning: Medium confidence. Search score: ", score)
+            else:
+                st.write(":x: Low confidence. Search score: ", score)
+
+######################################
+####### ENVIRONMENTAL ECONOMIST
+######################################
+                
+    st.markdown('#')
+    session_id_3 = session_id + 3
+    st.write("<h2 style='color: #F9423A;'>SOCIAL IMPACT", unsafe_allow_html=True)
+        
+    @st.cache_data
+    def _generate_social_chapter(question, _llm, _tools, index_name, session_id_3):
+        return generate_social_chapter(question, llm, tools, index_name, session_id_3)
+    
+    response_social = _generate_social_chapter(question, llm, tools, index_name, session_id_3)
+    st.markdown(response_social)
+    
+    ### RETRIEVE CITANTIONS AND RRF SCORES
+    search_results = simple_hybrid_search(question, index_name, filter, search_url, search_credential, azure_endpoint, openai_api_key, openai_api_version, embedding_deployment_name)
+    sources_nodes = list_sources_nodes(search_results)
+
+    with st.expander("See sources"):
+        for node in sources_nodes[0:5]:
+            file_name = os.path.basename(node["path"])
+            st.write("Source file: ", file_name)
+            raw_score = node["score"]
+            score = "{:.2f}".format(raw_score)
+            score = float(score)
+            if score >= 0.02:
+                st.write(":heavy_check_mark: High confidence. Search score: ", score)
+            elif score >= 0.01:
+                st.write(":warning: Medium confidence. Search score: ", score)
+            else:
+                st.write(":x: Low confidence. Search score: ", score)
+
+######################################
+####### SUMMARIZER
+######################################
+                
+    st.markdown('#')
+    session_id_4 = session_id + 4
+    st.write("<h2 style='color: #F9423A;'>CONCLUSION", unsafe_allow_html=True)
+
+    @st.cache_data
+    def _generate_conclusion(question, _llm, _tools, index_name, session_id_4):
+        return generate_conclusion(question, llm, tools, index_name, session_id_4)
+    
+    response_conclusion = _generate_conclusion(question, llm, tools, index_name, session_id_4)
+    
+    st.markdown(response_conclusion)
+
+################################################################################################################
+################################################################################################################
+
 # DOWNLOAD WORD DOCUMENT
     
-    save_as_word(response_intro, response_intro, response_intro, response_intro)
+    save_as_word(response_intro, response_env, response_social, response_conclusion)
     with open("ESIA Draft.docx", "rb") as f:
         bytes_data = f.read()
     st.download_button(
