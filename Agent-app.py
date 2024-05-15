@@ -17,8 +17,8 @@ search_api_key = st.secrets['search_api_key']
 search_api_version = st.secrets['search_api_version']
 search_service_name = st.secrets['search_service_name']
 
-os.environ["LANGCHAIN_TRACING_V2"] = "true"
 langsmith_key = st.secrets['langsmith_key']
+langchain_tracing = st.secrets['langchain_tracing_v2']
 
 search_url = f"https://{search_service_name}.search.windows.net/"
 search_credential = AzureKeyCredential(search_api_key)
