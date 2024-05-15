@@ -128,7 +128,10 @@ if init_prompt:
 
     st.write("<h2 style='color: #F9423A;'>INTRODUCTION", unsafe_allow_html=True)
 
-    response_intro = generate_intro(question, llm, tools, index_name, session_id)
+    @traceable
+    def _generate_intro(question, llm, tools, index_name, session_id):
+        return generate_intro(question, llm, tools, index_name, session_id)
+    response_intro = _generate_intro(question, llm, tools, index_name, session_id)
     st.markdown(response_intro)
     
     ### RETRIEVE CITATIONS AND RRF SCORES

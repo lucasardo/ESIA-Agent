@@ -38,3 +38,4 @@ from langchain_core.runnables import (RunnableLambda, ConfigurableFieldSpec, Run
 from langchain_community.chat_message_histories import ChatMessageHistory
 
 from langsmith import Client
+from langsmith import traceable
