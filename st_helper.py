@@ -304,7 +304,7 @@ def generate_env_chapter(question, llm, tools, indexes, session_id):
 
     with_message_history = RunnableWithMessageHistory(
         agent_executor,
-        get_session_history,
+        None,
         input_messages_key="question",
         history_messages_key="history"
     )
