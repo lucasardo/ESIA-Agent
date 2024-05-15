@@ -127,7 +127,7 @@ if init_prompt:
     st.write("<h2 style='color: #F9423A;'>INTRODUCTION", unsafe_allow_html=True)
 
     @st.cache_data
-    def _generate_intro(question, _llm, tools, index_name, session_id):
+    def _generate_intro(question, _llm, _tools, index_name, session_id):
         return generate_intro(question, llm, tools, index_name, session_id)
 
     response_intro = _generate_intro(question, llm, tools, index_name, session_id)
