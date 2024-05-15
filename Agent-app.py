@@ -22,7 +22,7 @@ search_credential = AzureKeyCredential(search_api_key)
 
 # Session variables
 
-session_id = 45332
+session_id = random.randint(1, 1000000)
 index_name = "esias-base-index"
 
 embed_model = AzureOpenAIEmbedding(
@@ -144,6 +144,10 @@ if init_prompt:
             else:
                 st.write(":x: Low confidence. Search score: ", score)
     
+    ### CHAT HISTORY
+    st.write(chat_history)
+    st.write(store)
+        
 ######################################
 ####### ENVIRONMENTAL ENGINEER
 ######################################
@@ -155,7 +159,7 @@ if init_prompt:
     response_env = generate_env_chapter(question, llm, tools, index_name, session_id_2)
     st.markdown(response_env)
 
-    ### RETRIEVE CITANTIONS AND RRF SCORES
+    ### RETRIEVE CITATIONS AND RRF SCORES
     search_results = simple_hybrid_search(question, index_name, filter, search_url, search_credential, azure_endpoint, openai_api_key, openai_api_version, embedding_deployment_name)
     sources_nodes = list_sources_nodes(search_results)
  
@@ -172,7 +176,11 @@ if init_prompt:
                 st.write(":warning: Medium confidence. Search score: ", score)
             else:
                 st.write(":x: Low confidence. Search score: ", score)
-
+    
+    ### CHAT HISTORY
+    st.write(chat_history)
+    st.write(store)
+    
 ######################################
 ####### SOCIAL ECONOMIST
 ######################################
@@ -184,7 +192,7 @@ if init_prompt:
     response_social = generate_social_chapter(question, llm, tools, index_name, session_id_3)
     st.markdown(response_social)
     
-    ### RETRIEVE CITANTIONS AND RRF SCORES
+    ### RETRIEVE CITATIONS AND RRF SCORES
     search_results = simple_hybrid_search(question, index_name, filter, search_url, search_credential, azure_endpoint, openai_api_key, openai_api_version, embedding_deployment_name)
     sources_nodes = list_sources_nodes(search_results)
 
@@ -201,7 +209,11 @@ if init_prompt:
                 st.write(":warning: Medium confidence. Search score: ", score)
             else:
                 st.write(":x: Low confidence. Search score: ", score)
-
+    
+    ### CHAT HISTORY
+    st.write(chat_history)
+    st.write(store)
+    
 ######################################
 ####### SUMMARIZER
 ######################################
@@ -214,17 +226,17 @@ if init_prompt:
     
     st.markdown(response_conclusion)
 
-################################################################################################################
-################################################################################################################
-
-# CHAT HISTORY AND DOCX GENERATION
+    ### CHAT HISTORY
     st.write(chat_history)
     st.write(store)
+
+################################################################################################################
+################################################################################################################
     
-    # Generate Docx
+    ### GENERATE DOCX
     word_data = save_as_word(response_intro, response_env, response_social, response_conclusion)
 
-    # Create download link
+    ### DOWNLOAD
     if word_data is None:
         st.error("Failed to generate the Word document.")
     else:
