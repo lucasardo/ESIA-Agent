@@ -1,7 +1,6 @@
 
-################################################################################################################
-
 from st_helper import *
+from utils import *
 
 # Environment variables
 
@@ -25,8 +24,6 @@ search_credential = AzureKeyCredential(search_api_key)
 
 session_id = 45332
 index_name = "esias-base-index"
-max_tokens = 4096
-dimensionality = 1536
 
 embed_model = AzureOpenAIEmbedding(
     model=embedding_model,
@@ -120,9 +117,9 @@ if init_prompt:
                             openai_api_key=openai_api_key, azure_endpoint=azure_endpoint, temperature=0)
     tools = [GetDocSearchResults_Tool(indexes=indexes, k=1, reranker_th=0, sas_token='na')]
     
-#######################
+######################################
 ####### PROJECT MANAGER
-#######################
+######################################
 
     st.write("<h2 style='color: #F9423A;'>INTRODUCTION", unsafe_allow_html=True)
 
@@ -177,7 +174,7 @@ if init_prompt:
                 st.write(":x: Low confidence. Search score: ", score)
 
 ######################################
-####### ENVIRONMENTAL ECONOMIST
+####### SOCIAL ECONOMIST
 ######################################
                 
     st.markdown('#')
@@ -220,14 +217,14 @@ if init_prompt:
 ################################################################################################################
 ################################################################################################################
 
-# DOWNLOAD WORD DOCUMENT
+# CHAT HISTORY AND DOCX GENERATION
     st.write(chat_history)
     st.write(store)
     
-    # Generate Word document
+    # Generate Docx
     word_data = save_as_word(response_intro, response_env, response_social, response_conclusion)
 
-    # Ensure word_data is not None
+    # Create download link
     if word_data is None:
         st.error("Failed to generate the Word document.")
     else:
