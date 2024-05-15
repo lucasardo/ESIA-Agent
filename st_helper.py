@@ -344,7 +344,7 @@ def generate_social_chapter(question, llm, tools, indexes, session_id):
         history_messages_key="history"
     )
 
-    response = with_message_history.invoke(
+    response = agent_executor.invoke(
         {"question": question},
         config={"configurable": {"session_id": session_id}}
     )
