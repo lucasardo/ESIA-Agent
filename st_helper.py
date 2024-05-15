@@ -330,7 +330,7 @@ def generate_env_chapter(question, llm, tools, indexes, session_id):
 
 def generate_social_chapter(question, llm, tools, indexes, session_id):
 
-    prompt = AGENT_ENV_PROMPT
+    prompt = AGENT_SOCIAL_PROMPT
 
     agent = create_openai_tools_agent(llm, tools, prompt)
 
