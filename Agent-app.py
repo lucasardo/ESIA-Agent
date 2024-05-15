@@ -126,7 +126,13 @@ if init_prompt:
 
     st.write("<h2 style='color: #F9423A;'>INTRODUCTION", unsafe_allow_html=True)
 
-    response_intro = generate_intro(question, llm, tools, index_name, session_id)
+    if "generate_intro_executed" not in st.session_state:
+        st.session_state.generate_intro_executed = False
+    
+    if not st.session_state.generate_intro_executed:
+        response_intro = generate_intro(question, llm, tools, index_name, session_id)
+        st.session_state.generate_intro_executed = True
+        
     st.markdown(response_intro)
     
     ### RETRIEVE CITANTIONS AND RRF SCORES
@@ -155,7 +161,13 @@ if init_prompt:
     session_id_2 = session_id + 2
     st.write("<h2 style='color: #F9423A;'>ENVIRONMENTAL IMPACT", unsafe_allow_html=True)
     
-    response_env = generate_env_chapter(question, llm, tools, index_name, session_id_2)
+    if "generate_env_chapter" not in st.session_state:
+        st.session_state.generate_env_chapter = False
+    
+    if not st.session_state.generate_env_chapter:
+        response_env = generate_env_chapter(question, llm, tools, index_name, session_id_2)
+        st.session_state.generate_env_chapter = True
+
     st.markdown(response_env)
 
     ### RETRIEVE CITANTIONS AND RRF SCORES
@@ -183,9 +195,13 @@ if init_prompt:
     st.markdown('#')
     session_id_3 = session_id + 3
     st.write("<h2 style='color: #F9423A;'>SOCIAL IMPACT", unsafe_allow_html=True)
-        
-    response_social = generate_social_chapter(question, llm, tools, index_name, session_id_3)
-    st.markdown(response_social)
+    
+    if "generate_social_chapter" not in st.session_state:
+        st.session_state.generate_social_chapter = False
+    
+    if not st.session_state.generate_social_chapter:
+        response_social = generate_social_chapter(question, llm, tools, index_name, session_id_3)
+        st.session_state.generate_social_chapter = True    
     
     ### RETRIEVE CITANTIONS AND RRF SCORES
     search_results = simple_hybrid_search(question, index_name, filter, search_url, search_credential, azure_endpoint, openai_api_key, openai_api_version, embedding_deployment_name)
@@ -212,9 +228,14 @@ if init_prompt:
     st.markdown('#')
     session_id_4 = session_id + 4
     st.write("<h2 style='color: #F9423A;'>CONCLUSION", unsafe_allow_html=True)
-      
-    response_conclusion = generate_conclusion(question, llm, tools, index_name, session_id_4)
     
+    if "generate_conclusion" not in st.session_state:
+        st.session_state.generate_conclusion = False
+    
+    if not st.session_state.generate_conclusion:
+        response_conclusion = generate_conclusion(question, llm, tools, index_name, session_id_4)
+        st.session_state.generate_conclusion = True     
+
     st.markdown(response_conclusion)
 
 ################################################################################################################
