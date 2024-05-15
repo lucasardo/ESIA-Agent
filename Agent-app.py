@@ -120,6 +120,9 @@ if init_prompt:
                             openai_api_key=openai_api_key, azure_endpoint=azure_endpoint, temperature=0)
     tools = [GetDocSearchResults_Tool(indexes=indexes, k=1, reranker_th=0, sas_token='na')]
     
+    st.write(chat_history)
+    st.write(store)
+    
 #######################
 ####### PROJECT MANAGER
 #######################
