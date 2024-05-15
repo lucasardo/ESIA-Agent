@@ -82,44 +82,6 @@ def list_sources_nodes(search_results):
         
     return sources_nodes
 
-########################################### AGENTS ###################################################
-
-AGENT_INTRO_PROMPT = ChatPromptTemplate.from_messages(
-    [
-        ("system", CUSTOM_CHATBOT_PREFIX + PROMPT_TEMPLATE_INTRO),
-        MessagesPlaceholder(variable_name='history', optional=True),
-        ("human", "{question}"),
-        MessagesPlaceholder(variable_name='agent_scratchpad')
-    ]
-)
-
-AGENT_ENV_PROMPT = ChatPromptTemplate.from_messages(
-    [
-        ("system", CUSTOM_CHATBOT_PREFIX + PROMPT_TEMPLATE_ENV),
-        MessagesPlaceholder(variable_name='history', optional=True),
-        ("human", "{question}"),
-        MessagesPlaceholder(variable_name='agent_scratchpad')
-    ]
-)
-
-AGENT_SOCIAL_PROMPT = ChatPromptTemplate.from_messages(
-    [
-        ("system", CUSTOM_CHATBOT_PREFIX + PROMPT_TEMPLATE_SOCIAL),
-        MessagesPlaceholder(variable_name='history', optional=True),
-        ("human", "{question}"),
-        MessagesPlaceholder(variable_name='agent_scratchpad')
-    ]
-)
-
-AGENT_CONCLUSION_PROMPT = ChatPromptTemplate.from_messages(
-    [
-        ("system", CUSTOM_CHATBOT_PREFIX + PROMPT_TEMPLATE_CONCLUSION),
-        MessagesPlaceholder(variable_name='history', optional=True),
-        ("human", "{question}"),
-        MessagesPlaceholder(variable_name='agent_scratchpad')
-    ]
-)
-
 ########################################### SEARCH TOOLS ###################################################
 
 class SearchInput(BaseModel):
@@ -234,6 +196,44 @@ class GetDocSearchResults_Tool(BaseTool):
         results = retriever.get_relevant_documents(query=query)
         
         return results
+
+########################################### AGENTS ###################################################
+
+AGENT_INTRO_PROMPT = ChatPromptTemplate.from_messages(
+    [
+        ("system", CUSTOM_CHATBOT_PREFIX + PROMPT_TEMPLATE_INTRO),
+        MessagesPlaceholder(variable_name='history', optional=True),
+        ("human", "{question}"),
+        MessagesPlaceholder(variable_name='agent_scratchpad')
+    ]
+)
+
+AGENT_ENV_PROMPT = ChatPromptTemplate.from_messages(
+    [
+        ("system", CUSTOM_CHATBOT_PREFIX + PROMPT_TEMPLATE_ENV),
+        MessagesPlaceholder(variable_name='history', optional=True),
+        ("human", "{question}"),
+        MessagesPlaceholder(variable_name='agent_scratchpad')
+    ]
+)
+
+AGENT_SOCIAL_PROMPT = ChatPromptTemplate.from_messages(
+    [
+        ("system", CUSTOM_CHATBOT_PREFIX + PROMPT_TEMPLATE_SOCIAL),
+        MessagesPlaceholder(variable_name='history', optional=True),
+        ("human", "{question}"),
+        MessagesPlaceholder(variable_name='agent_scratchpad')
+    ]
+)
+
+AGENT_CONCLUSION_PROMPT = ChatPromptTemplate.from_messages(
+    [
+        ("system", CUSTOM_CHATBOT_PREFIX + PROMPT_TEMPLATE_CONCLUSION),
+        MessagesPlaceholder(variable_name='history', optional=True),
+        ("human", "{question}"),
+        MessagesPlaceholder(variable_name='agent_scratchpad')
+    ]
+)
 
 ########################################### CHAT HISTORY ###################################################
 
