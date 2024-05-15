@@ -94,6 +94,7 @@ else:
     st.markdown(f"<h1 style='color: #F9423A; text-align: center;'>{header}</h1>", unsafe_allow_html=True)
     st.markdown(f"<h4 style='color: #F9423A; text-align: center;'>{subheader}</h4>", unsafe_allow_html=True)
 
+bytes_data = []
 
 st.download_button(
     label="Click here to download",
@@ -229,9 +230,10 @@ if init_prompt:
 ################################################################################################################
 
 # DOWNLOAD WORD DOCUMENT
+    
     save_as_word(response_intro, response_env, response_social, response_conclusion)
-with open("ESIA Draft.docx", "rb") as f:
-    bytes_data = f.read()
+    with open("ESIA Draft.docx", "rb") as f:
+        bytes_data = f.read()
     
     st.write(chat_history)
     st.write(store)
