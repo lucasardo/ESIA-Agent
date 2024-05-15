@@ -131,9 +131,8 @@ if init_prompt:
     
     if not st.session_state.generate_intro_executed:
         response_intro = generate_intro(question, llm, tools, index_name, session_id)
+        st.markdown(response_intro)
         st.session_state.generate_intro_executed = True
-        
-    st.markdown(response_intro)
     
     ### RETRIEVE CITANTIONS AND RRF SCORES
     search_results = simple_hybrid_search(question, index_name, filter, search_url, search_credential, azure_endpoint, openai_api_key, openai_api_version, embedding_deployment_name)
@@ -166,9 +165,8 @@ if init_prompt:
     
     if not st.session_state.generate_env_chapter:
         response_env = generate_env_chapter(question, llm, tools, index_name, session_id_2)
+        st.markdown(response_env)
         st.session_state.generate_env_chapter = True
-
-    st.markdown(response_env)
 
     ### RETRIEVE CITANTIONS AND RRF SCORES
     search_results = simple_hybrid_search(question, index_name, filter, search_url, search_credential, azure_endpoint, openai_api_key, openai_api_version, embedding_deployment_name)
@@ -201,6 +199,7 @@ if init_prompt:
     
     if not st.session_state.generate_social_chapter:
         response_social = generate_social_chapter(question, llm, tools, index_name, session_id_3)
+        st.markdown(response_social)
         st.session_state.generate_social_chapter = True    
     
     ### RETRIEVE CITANTIONS AND RRF SCORES
@@ -234,9 +233,8 @@ if init_prompt:
     
     if not st.session_state.generate_conclusion:
         response_conclusion = generate_conclusion(question, llm, tools, index_name, session_id_4)
+        st.markdown(response_conclusion)
         st.session_state.generate_conclusion = True     
-
-    st.markdown(response_conclusion)
 
 ################################################################################################################
 ################################################################################################################
