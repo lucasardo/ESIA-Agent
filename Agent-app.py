@@ -126,15 +126,14 @@ if init_prompt:
 
     st.write("<h2 style='color: #F9423A;'>INTRODUCTION", unsafe_allow_html=True)
 
-    if "generate_intro_executed" not in st.session_state:
-        st.session_state.generate_intro_executed = False
+    @st.cache_data
+    def _generate_intro(question, llm, tools, index_name, session_id):
+        return generate_intro(question, llm, tools, index_name, session_id)
+
+    response_intro = _generate_intro(question, llm, tools, index_name, session_id)
+    st.markdown(response_intro)
     
-    if not st.session_state.generate_intro_executed:
-        response_intro = generate_intro(question, llm, tools, index_name, session_id)
-        st.markdown(response_intro)
-        st.session_state.generate_intro_executed = True
-    
-    ### RETRIEVE CITANTIONS AND RRF SCORES
+    ### RETRIEVE CITATIONS AND RRF SCORES
     search_results = simple_hybrid_search(question, index_name, filter, search_url, search_credential, azure_endpoint, openai_api_key, openai_api_version, embedding_deployment_name)
     sources_nodes = list_sources_nodes(search_results)
     
@@ -151,97 +150,10 @@ if init_prompt:
                 st.write(":warning: Medium confidence. Search score: ", score)
             else:
                 st.write(":x: Low confidence. Search score: ", score)
-    
-######################################
-####### ENVIRONMENTAL ENGINEER
-######################################
-                
-    st.markdown('#')
-    session_id_2 = session_id + 2
-    st.write("<h2 style='color: #F9423A;'>ENVIRONMENTAL IMPACT", unsafe_allow_html=True)
-    
-    if "generate_env_chapter" not in st.session_state:
-        st.session_state.generate_env_chapter = False
-    
-    if not st.session_state.generate_env_chapter:
-        response_env = generate_env_chapter(question, llm, tools, index_name, session_id_2)
-        st.markdown(response_env)
-        st.session_state.generate_env_chapter = True
-
-    ### RETRIEVE CITANTIONS AND RRF SCORES
-    search_results = simple_hybrid_search(question, index_name, filter, search_url, search_credential, azure_endpoint, openai_api_key, openai_api_version, embedding_deployment_name)
-    sources_nodes = list_sources_nodes(search_results)
  
-    with st.expander("See sources"):
-        for node in sources_nodes[0:5]:
-            file_name = os.path.basename(node["path"])
-            st.write("Source file: ", file_name)
-            raw_score = node["score"]
-            score = "{:.2f}".format(raw_score)
-            score = float(score)
-            if score >= 0.02:
-                st.write(":heavy_check_mark: High confidence. Search score: ", score)
-            elif score >= 0.01:
-                st.write(":warning: Medium confidence. Search score: ", score)
-            else:
-                st.write(":x: Low confidence. Search score: ", score)
-
-######################################
-####### ENVIRONMENTAL ECONOMIST
-######################################
-                
-    st.markdown('#')
-    session_id_3 = session_id + 3
-    st.write("<h2 style='color: #F9423A;'>SOCIAL IMPACT", unsafe_allow_html=True)
-    
-    if "generate_social_chapter" not in st.session_state:
-        st.session_state.generate_social_chapter = False
-    
-    if not st.session_state.generate_social_chapter:
-        response_social = generate_social_chapter(question, llm, tools, index_name, session_id_3)
-        st.markdown(response_social)
-        st.session_state.generate_social_chapter = True    
-    
-    ### RETRIEVE CITANTIONS AND RRF SCORES
-    search_results = simple_hybrid_search(question, index_name, filter, search_url, search_credential, azure_endpoint, openai_api_key, openai_api_version, embedding_deployment_name)
-    sources_nodes = list_sources_nodes(search_results)
-
-    with st.expander("See sources"):
-        for node in sources_nodes[0:5]:
-            file_name = os.path.basename(node["path"])
-            st.write("Source file: ", file_name)
-            raw_score = node["score"]
-            score = "{:.2f}".format(raw_score)
-            score = float(score)
-            if score >= 0.02:
-                st.write(":heavy_check_mark: High confidence. Search score: ", score)
-            elif score >= 0.01:
-                st.write(":warning: Medium confidence. Search score: ", score)
-            else:
-                st.write(":x: Low confidence. Search score: ", score)
-
-######################################
-####### SUMMARIZER
-######################################
-                
-    st.markdown('#')
-    session_id_4 = session_id + 4
-    st.write("<h2 style='color: #F9423A;'>CONCLUSION", unsafe_allow_html=True)
-    
-    if "generate_conclusion" not in st.session_state:
-        st.session_state.generate_conclusion = False
-    
-    if not st.session_state.generate_conclusion:
-        response_conclusion = generate_conclusion(question, llm, tools, index_name, session_id_4)
-        st.markdown(response_conclusion)
-        st.session_state.generate_conclusion = True     
-
-################################################################################################################
-################################################################################################################
-
 # DOWNLOAD WORD DOCUMENT
     
-    save_as_word(response_intro, response_env, response_social, response_conclusion)
+    save_as_word(response_intro, response_intro, response_intro, response_intro)
     with open("ESIA Draft.docx", "rb") as f:
         bytes_data = f.read()
     st.download_button(
