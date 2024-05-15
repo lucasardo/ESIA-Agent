@@ -370,7 +370,7 @@ def generate_conclusion(question, llm, tools, indexes, session_id):
     agent = create_openai_tools_agent(llm, tools, prompt)
 
     agent_executor = AgentExecutor(
-        agent=agent, tools=tools, handle_parsing_errors=True, verbose=False)
+        agent=agent, handle_parsing_errors=True, verbose=False)
 
     with_message_history = RunnableWithMessageHistory(
         agent_executor,
