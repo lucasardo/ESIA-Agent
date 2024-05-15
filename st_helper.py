@@ -304,12 +304,12 @@ def generate_env_chapter(question, llm, tools, indexes, session_id):
 
     with_message_history = RunnableWithMessageHistory(
         agent_executor,
-        None,
+        get_session_history,
         input_messages_key="question",
         history_messages_key="history"
     )
 
-    response = with_message_history.invoke(
+    response = agent_executor.invoke(
         {"question": question},
         config={"configurable": {"session_id": session_id}}
     )
