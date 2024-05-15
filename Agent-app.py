@@ -236,8 +236,19 @@ if init_prompt:
 
         # JavaScript to create a clickable download link
         download_link = f"""
-            <a href="data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,{b64_word_data}" download="ESIA_Draft.docx">
-                Click here to download your document
+            <a href="data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,{b64_word_data}" download="ESIA_Draft.docx" style="
+                display: inline-block;
+                padding: 8px 16px;
+                font-size: 16px;
+                color: #fff;
+                background-color: #007bff;
+                border: none;
+                border-radius: 4px;
+                text-align: center;
+                text-decoration: none;
+                cursor: pointer;
+            ">
+                Click here to download
             </a>
         """
 
