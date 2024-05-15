@@ -120,23 +120,16 @@ if init_prompt:
                             openai_api_key=openai_api_key, azure_endpoint=azure_endpoint, temperature=0)
     tools = [GetDocSearchResults_Tool(indexes=indexes, k=1, reranker_th=0, sas_token='na')]
     
-    st.write(chat_history)
-    st.write(store)
-    
 #######################
 ####### PROJECT MANAGER
 #######################
 
     st.write("<h2 style='color: #F9423A;'>INTRODUCTION", unsafe_allow_html=True)
 
-    @st.cache_data
-    def _generate_intro(question, _llm, _tools, index_name, session_id):
-        return generate_intro(question, llm, tools, index_name, session_id)
-
-    response_intro = _generate_intro(question, llm, tools, index_name, session_id)
+    response_intro = generate_intro(question, llm, tools, index_name, session_id)
     st.markdown(response_intro)
     
-    ### RETRIEVE CITANTIONS AND RRF SCORES
+    ### RETRIEVE CITATIONS AND RRF SCORES
     search_results = simple_hybrid_search(question, index_name, filter, search_url, search_credential, azure_endpoint, openai_api_key, openai_api_version, embedding_deployment_name)
     sources_nodes = list_sources_nodes(search_results)
     
@@ -162,11 +155,7 @@ if init_prompt:
     session_id_2 = session_id + 2
     st.write("<h2 style='color: #F9423A;'>ENVIRONMENTAL IMPACT", unsafe_allow_html=True)
     
-    @st.cache_data
-    def _generate_env_chapter(question, _llm, _tools, index_name, session_id_2):
-        return generate_env_chapter(question, llm, tools, index_name, session_id_2)
-    
-    response_env = _generate_env_chapter(question, llm, tools, index_name, session_id_2)
+    response_env = generate_env_chapter(question, llm, tools, index_name, session_id_2)
     st.markdown(response_env)
 
     ### RETRIEVE CITANTIONS AND RRF SCORES
@@ -195,11 +184,7 @@ if init_prompt:
     session_id_3 = session_id + 3
     st.write("<h2 style='color: #F9423A;'>SOCIAL IMPACT", unsafe_allow_html=True)
         
-    @st.cache_data
-    def _generate_social_chapter(question, _llm, _tools, index_name, session_id_3):
-        return generate_social_chapter(question, llm, tools, index_name, session_id_3)
-    
-    response_social = _generate_social_chapter(question, llm, tools, index_name, session_id_3)
+    response_social = generate_social_chapter(question, llm, tools, index_name, session_id_3)
     st.markdown(response_social)
     
     ### RETRIEVE CITANTIONS AND RRF SCORES
@@ -227,12 +212,8 @@ if init_prompt:
     st.markdown('#')
     session_id_4 = session_id + 4
     st.write("<h2 style='color: #F9423A;'>CONCLUSION", unsafe_allow_html=True)
-
-    @st.cache_data
-    def _generate_conclusion(question, _llm, _tools, index_name, session_id_4):
-        return generate_conclusion(question, llm, tools, index_name, session_id_4)
-    
-    response_conclusion = _generate_conclusion(question, llm, tools, index_name, session_id_4)
+      
+    response_conclusion = generate_conclusion(question, llm, tools, index_name, session_id_4)
     
     st.markdown(response_conclusion)
 
