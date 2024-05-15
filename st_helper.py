@@ -1,6 +1,7 @@
 import os
 import streamlit as st
 import openai
+import base64
 from azure.search.documents import SearchClient
 from azure.search.documents.models import VectorizedQuery
 from azure.core.credentials import AzureKeyCredential

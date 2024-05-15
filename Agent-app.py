@@ -93,16 +93,6 @@ if not st.session_state.typewriter_executed:
 else:
     st.markdown(f"<h1 style='color: #F9423A; text-align: center;'>{header}</h1>", unsafe_allow_html=True)
     st.markdown(f"<h4 style='color: #F9423A; text-align: center;'>{subheader}</h4>", unsafe_allow_html=True)
-
-with open("ESIA Draft.docx", "rb") as f:
-    bytes_data = f.read()
-
-st.download_button(
-    label="Click here to download",
-    data=bytes_data,
-    file_name="ESIA Draft.docx",
-    mime="application/docx"
-)
     
 st.markdown('#') 
 
@@ -231,10 +221,19 @@ if init_prompt:
 ################################################################################################################
 
 # DOWNLOAD WORD DOCUMENT
-    
-    save_as_word(response_intro, response_env, response_social, response_conclusion)
-    with open("ESIA Draft.docx", "rb") as f:
-        bytes_data = f.read()
-    
     st.write(chat_history)
     st.write(store)
+    
+    word_data = save_as_word(response_intro, response_env, response_social, response_conclusion)
+    # Convert to downloadable format
+    b64_word_data = base64.b64encode(word_data).decode()
+
+    # JavaScript to create a clickable download link
+    download_link = f"""
+        <a href="data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,{b64_word_data}" download="ESIA_Draft.docx">
+            Click here to download your document
+        </a>
+        """
+
+    # Display the clickable download link in Streamlit
+    st.markdown(download_link, unsafe_allow_html=True)
