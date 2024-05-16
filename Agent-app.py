@@ -123,13 +123,13 @@ if init_prompt:
     indexes = [index_name]
     llm = AzureChatOpenAI(deployment_name=openai_deployment_name, openai_api_version=openai_api_version,
                             openai_api_key=openai_api_key, azure_endpoint=azure_endpoint, temperature=0)
-    tools = [GetDocSearchResults_Tool(indexes=indexes, k=1, reranker_th=0, sas_token='na')]
+    tools = [GetDocSearchResults_Tool(indexes=indexes, k=2, reranker_th=0.02, sas_token='na')]
     
 ######################################
 ####### PROJECT MANAGER
 ######################################
 
-    st.write("<h2 style='color: #F9423A;'>INTRODUCTION", unsafe_allow_html=True)
+    st.write(f"<h2 style='color: #F9423A;'>INTRODUCTION</h2>", unsafe_allow_html=True)
 
     response_intro = generate_intro(question, llm, tools, index_name, session_id)
     st.markdown(response_intro)
@@ -157,7 +157,7 @@ if init_prompt:
 ######################################
                 
     st.markdown('#')
-    st.write("<h2 style='color: #F9423A;'>ENVIRONMENTAL IMPACT", unsafe_allow_html=True)
+    st.write(f"<h2 style='color: #F9423A;'>ENVIRONMENTAL IMPACT</h2>", unsafe_allow_html=True)
     
     response_env = generate_env_chapter(question, llm, tools, index_name, session_id)
     st.markdown(response_env)
@@ -185,7 +185,7 @@ if init_prompt:
 ######################################
                 
     st.markdown('#')
-    st.write("<h2 style='color: #F9423A;'>SOCIAL IMPACT", unsafe_allow_html=True)
+    st.write(f"<h2 style='color: #F9423A;'>SOCIAL IMPACT</h2>", unsafe_allow_html=True)
         
     response_social = generate_social_chapter(question, llm, tools, index_name, session_id)
     st.markdown(response_social)
@@ -213,7 +213,7 @@ if init_prompt:
 ######################################
                 
     st.markdown('#')
-    st.write("<h2 style='color: #F9423A;'>CONCLUSION", unsafe_allow_html=True)
+    st.write(f"<h2 style='color: #F9423A;'>CONCLUSION</h2>", unsafe_allow_html=True)
     
     HISTORY_SUMMARY = str(store[session_id])
     

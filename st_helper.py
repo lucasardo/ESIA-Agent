@@ -89,10 +89,10 @@ class SearchInput(BaseModel):
 
 def get_search_results(query: str, indexes: list,
                        k: int = 10,
-                       reranker_threshold: int = 1,
+                       reranker_threshold: float = 1,
                        sas_token: str = "") -> List[dict]:
     """Performs multi-index hybrid search and returns ordered dictionary with the combined results"""
-    
+
     # Define the request headers
     headers = {
         "Content-Type": "application/json",
@@ -101,8 +101,6 @@ def get_search_results(query: str, indexes: list,
 
     params = {'api-version': search_api_version}
 
-    k = 1
-    
     agg_search_results = dict()
 
     # Define the request payload
@@ -113,14 +111,13 @@ def get_search_results(query: str, indexes: list,
         "count": "true",
         "top": k
     }
-    
+
     response = requests.post(search_endpoint + "indexes/" + index_name + "/docs/search",
                          data=json.dumps(search_payload), headers=headers, params=params)
 
     search_results = response.json()
     agg_search_results[index_name] = search_results
 
-    reranker_threshold = 0
 
     content = dict()
     ordered_content = OrderedDict()
@@ -139,13 +136,11 @@ def get_search_results(query: str, indexes: list,
                     "index": index
                 }
 
-    topk = k
-
     count = 0  # To keep track of the number of results added
     for id in sorted(content, key=lambda x: content[x]["score"], reverse=True):
         ordered_content[id] = content[id]
         count += 1
-        if count >= topk:  # Stop after adding topK results
+        if count >= k:  # Stop after adding topK results
             break
 
     return ordered_content   
@@ -154,7 +149,7 @@ class CustomAzureSearchRetriever(BaseRetriever):
 
     indexes: List
     topK: int
-    reranker_threshold: int
+    reranker_th: float
     sas_token: str = ""
 
     def _get_relevant_documents(
@@ -162,7 +157,7 @@ class CustomAzureSearchRetriever(BaseRetriever):
     ) -> List[Document]:
 
         ordered_results = get_search_results(
-            query, self.indexes, k=self.topK, reranker_threshold=self.reranker_threshold, sas_token=self.sas_token)
+            query, self.indexes, k=self.topK, reranker_threshold=self.reranker_th, sas_token=self.sas_token)
 
         top_docs = []
         for key, value in ordered_results.items():
@@ -172,10 +167,8 @@ class CustomAzureSearchRetriever(BaseRetriever):
                     "source": location, "score": value["score"]}))
             except:
                 print("An exception occurred")
- 
-        # print(top_docs) 
 
-        return top_docs  
+        return top_docs 
 
 class GetDocSearchResults_Tool(BaseTool):
     name = "docsearch"
@@ -184,17 +177,17 @@ class GetDocSearchResults_Tool(BaseTool):
 
     indexes: List[str] = []
     k: int = 10
-    reranker_th: int = 1
+    reranker_th: float = 1
     sas_token: str = ""
 
     def _run(
         self, query: str, run_manager: Optional[CallbackManagerForToolRun] = None
     ) -> str:
 
-        retriever = CustomAzureSearchRetriever(indexes=self.indexes, topK=self.k, reranker_threshold=self.reranker_th,
+        retriever = CustomAzureSearchRetriever(indexes=self.indexes, topK=self.k, reranker_th=self.reranker_th,
                                                sas_token=self.sas_token, callback_manager=self.callbacks)
         results = retriever.get_relevant_documents(query=query)
-        
+
         return results
 
 ########################################### AGENTS ###################################################
