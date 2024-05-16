@@ -228,7 +228,7 @@ if init_prompt:
     
     chain = CONCLUSION_PROMPT | llm | output_parser
       
-    response_conclusion = chain.invoke({"summary_question": "Summarize the message history in order to write the conclusion chapter of the ESIA report."})
+    response_conclusion = chain.invoke({"summary_question": "Write a conclusion chapter for an Environmental and Social Impact Assessment, using information provided in the message history."})
     
     st.markdown(response_conclusion)
 
