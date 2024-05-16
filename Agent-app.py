@@ -21,6 +21,13 @@ search_service_name = st.secrets['search_service_name']
 search_url = f"https://{search_service_name}.search.windows.net/"
 search_credential = AzureKeyCredential(search_api_key)
 
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
+os.environ["LANGCHAIN_PROJECT"] = f"Streamlit ESIA Agent"
+os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
+os.environ["LANGCHAIN_API_KEY"] = st.secrets['langsmith_key']
+
+client = Client()
+
 # Session variables
 
 session_id = random.randint(0, 1000000)
@@ -34,11 +41,11 @@ embed_model = AzureOpenAIEmbedding(
     api_version=openai_api_version
 )
 
-llmChat = AzureOpenAI(
-    engine=str(openai_deployment_name),
-    azure_endpoint=str(azure_endpoint),
-    api_key=str(openai_api_key),
-    api_version=str(openai_api_version)
+llmChat = AzureChatOpenAI(
+    deployment_name=openai_deployment_name,
+    openai_api_version=openai_api_version,
+    openai_api_key=openai_api_key,
+    azure_endpoint=azure_endpoint
 )
 
 prompt_helper = PromptHelper(
@@ -144,10 +151,6 @@ if init_prompt:
                 st.write(":warning: Medium confidence. Search score: ", score)
             else:
                 st.write(":x: Low confidence. Search score: ", score)
-    
-    ### CHAT HISTORY
-    st.write(chat_history)
-    st.write(store)
         
 ######################################
 ####### ENVIRONMENTAL ENGINEER
@@ -177,10 +180,6 @@ if init_prompt:
             else:
                 st.write(":x: Low confidence. Search score: ", score)
     
-    ### CHAT HISTORY
-    st.write(chat_history)
-    st.write(store)
-    
 ######################################
 ####### SOCIAL ECONOMIST
 ######################################
@@ -209,31 +208,29 @@ if init_prompt:
             else:
                 st.write(":x: Low confidence. Search score: ", score)
     
-    ### CHAT HISTORY
-    st.write(chat_history)
-    st.write(store)
-    
 ######################################
 ####### SUMMARIZER
 ######################################
                 
     st.markdown('#')
     st.write("<h2 style='color: #F9423A;'>CONCLUSION", unsafe_allow_html=True)
-      
-    rag_chain = (
-    {"context": store, "question": RunnablePassthrough()}
-    | question
-    | llm
-    | StrOutputParser()
+    
+    HISTORY_SUMMARY = store[session_id]
+    
+    CONCLUSION_PROMPT = ChatPromptTemplate.from_messages(
+        [
+            ("system", HISTORY_SUMMARY),
+            ("human", "{summary_question}"),
+        ]
     )
     
-    response_conclusion = rag_chain.invoke("Summarize the stored information")
+    output_parser = StrOutputParser()
+    
+    chain = CONCLUSION_PROMPT | llm | output_parser
+      
+    response_conclusion = chain.invoke({"summary_question": "Summarize the message history in order to write the conclusion chapter of the ESIA report."})
     
     st.markdown(response_conclusion)
-
-    ### CHAT HISTORY
-    st.write(chat_history)
-    st.write(store)
 
 ################################################################################################################
 ################################################################################################################
@@ -268,3 +265,8 @@ if init_prompt:
 
         # Display the clickable download link in Streamlit
         st.markdown(download_link, unsafe_allow_html=True)
+
+        ### CHAT HISTORY
+    
+    st.write(chat_history)
+    st.write(store)
