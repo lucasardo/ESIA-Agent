@@ -152,49 +152,7 @@ if init_prompt:
             else:
                 st.write(":x: Low confidence. Search score: ", score)
         
-######################################
-####### ENVIRONMENTAL ENGINEER
-######################################
-                
-    st.markdown('#')
-    st.write("<h2 style='color: #F9423A;'>ENVIRONMENTAL IMPACT", unsafe_allow_html=True)
-    
-    response_env = generate_env_chapter(question, llm, tools, index_name, session_id)
-    st.markdown(response_env)
 
-    ### RETRIEVE CITATIONS AND RRF SCORES
-    search_results = simple_hybrid_search(question, index_name, filter, search_url, search_credential, azure_endpoint, openai_api_key, openai_api_version, embedding_deployment_name)
-    sources_nodes = list_sources_nodes(search_results)
- 
-    with st.expander("See sources"):
-        for node in sources_nodes[0:5]:
-            file_name = os.path.basename(node["path"])
-            st.write("Source file: ", file_name)
-            raw_score = node["score"]
-            score = "{:.2f}".format(raw_score)
-            score = float(score)
-            if score >= 0.02:
-                st.write(":heavy_check_mark: High confidence. Search score: ", score)
-            elif score >= 0.01:
-                st.write(":warning: Medium confidence. Search score: ", score)
-            else:
-                st.write(":x: Low confidence. Search score: ", score)
-    
-######################################
-####### SOCIAL ECONOMIST
-######################################
-                
-    st.markdown('#')
-    st.write("<h2 style='color: #F9423A;'>SOCIAL IMPACT", unsafe_allow_html=True)
-        
-    response_social = generate_social_chapter(question, llm, tools, index_name, session_id)
-    st.markdown(response_social)
-    
-    ### RETRIEVE CITATIONS AND RRF SCORES
-    search_results = simple_hybrid_search(question, index_name, filter, search_url, search_credential, azure_endpoint, openai_api_key, openai_api_version, embedding_deployment_name)
-    sources_nodes = list_sources_nodes(search_results)
-
-    with st.expander("See sources"):
         for node in sources_nodes[0:5]:
             file_name = os.path.basename(node["path"])
             st.write("Source file: ", file_name)
@@ -236,7 +194,7 @@ if init_prompt:
 ################################################################################################################
     
     ### GENERATE DOCX
-    word_data = save_as_word(response_intro, response_env, response_social, response_conclusion)
+    word_data = save_as_word(response_intro, response_intro, response_intro, response_conclusion)
 
     ### DOWNLOAD
     if word_data is None:
