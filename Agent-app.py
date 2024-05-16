@@ -22,7 +22,7 @@ search_url = f"https://{search_service_name}.search.windows.net/"
 search_credential = AzureKeyCredential(search_api_key)
 
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
-os.environ["LANGCHAIN_PROJECT"] = f"Streamlit ESIA Agent"
+os.environ["LANGCHAIN_PROJECT"] = f"RAG Agent - Streamlit"
 os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
 os.environ["LANGCHAIN_API_KEY"] = st.secrets['langsmith_key']
 
