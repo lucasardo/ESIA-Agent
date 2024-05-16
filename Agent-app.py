@@ -41,11 +41,11 @@ embed_model = AzureOpenAIEmbedding(
     api_version=openai_api_version
 )
 
-llmChat = AzureChatOpenAI(
-    deployment_name=openai_deployment_name,
-    openai_api_version=openai_api_version,
-    openai_api_key=openai_api_key,
-    azure_endpoint=azure_endpoint
+llmChat = AzureOpenAI(
+    engine=str(openai_deployment_name),
+    azure_endpoint=str(azure_endpoint),
+    api_key=str(openai_api_key),
+    api_version=str(openai_api_version)
 )
 
 prompt_helper = PromptHelper(
