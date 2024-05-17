@@ -214,11 +214,14 @@ if init_prompt:
     st.markdown('#')
     st.write(f"<h2 style='color: #F9423A;'>CONCLUSION</h2>", unsafe_allow_html=True)
     
-    HISTORY_SUMMARY = str(chat_history[session_id])
-    
+    HISTORY_SUM = []
+
+    for i in chat_history[session_id]:
+        HISTORY_SUM.append(i['output'])
+               
     CONCLUSION_PROMPT = ChatPromptTemplate.from_messages(
         [
-            ("system", HISTORY_SUMMARY),
+            ("system", HISTORY_SUM),
             ("human", "{question}"),
         ]
     )
