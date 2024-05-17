@@ -214,7 +214,7 @@ if init_prompt:
     st.markdown('#')
     st.write(f"<h2 style='color: #F9423A;'>CONCLUSION</h2>", unsafe_allow_html=True)
     
-    HISTORY_SUMMARY = str(store[session_id])
+    HISTORY_SUMMARY = str(chat_history[session_id])
     
     CONCLUSION_PROMPT = ChatPromptTemplate.from_messages(
         [
