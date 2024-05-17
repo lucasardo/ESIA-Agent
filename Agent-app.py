@@ -230,7 +230,10 @@ if init_prompt:
     
     chain = CONCLUSION_PROMPT | llm | output_parser
       
-    response_conclusion = chain.invoke({"question": "Write a conclusion chapter for an Environmental and Social Impact Assessment, using information provided in the message history."})
+    response_conclusion = chain.invoke(
+        {"question": "Write a conclusion chapter for an Environmental and Social Impact Assessment, using information provided in the message history."},
+        config={"configurable": {"session_id": session_id}}
+        )
     
     st.markdown(response_conclusion)
 
