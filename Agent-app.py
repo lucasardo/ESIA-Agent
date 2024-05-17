@@ -219,7 +219,7 @@ if init_prompt:
     CONCLUSION_PROMPT = ChatPromptTemplate.from_messages(
         [
             ("system", HISTORY_SUMMARY),
-            ("human", "{summary_question}"),
+            ("human", "{question}"),
         ]
     )
     
@@ -228,7 +228,7 @@ if init_prompt:
     chain = CONCLUSION_PROMPT | llm | output_parser
       
     response_conclusion = chain.invoke(
-        {"summary_question": "Write a conclusion chapter for an Environmental and Social Impact Assessment, using information provided in the message history."},
+        {"question": "Write a conclusion chapter for an Environmental and Social Impact Assessment, using information provided in the message history."},
         config={"configurable": {"session_id": session_id}}
         )
     
